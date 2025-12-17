@@ -104,7 +104,7 @@
         .hero-images-container { width: 100%; height: 100%; display: grid; grid-template-rows: 1fr 1fr; border-left: 10px solid #000; }
         .hero-img-box { width: 100%; height: 100%; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 5px solid #000; position: relative; }
         .hero-img-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .hero-img-box span { position: absolute; bottom: 8px; font-size: 0.6rem; font-weight: bold; color: #999; }
+        .hero-img-box span.filename-label { position: absolute; bottom: 8px; font-size: 0.6rem; font-weight: bold; color: #999; z-index: 5; }
         .hero-img-box.placeholder-active::before { content: "\f188"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 3rem; color: #ddd; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 10px; border: 2px solid #000; }
@@ -131,19 +131,31 @@
         
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: #fff; padding: 40px; max-width: 800px; width: 100%; border: 10px solid var(--vans-red); }
+        
+        /* Hint for missing images */
+        .img-hint { position: absolute; bottom: 5px; font-size: 9px; color: #ff4444; background: rgba(255,255,255,0.9); padding: 2px 4px; border-radius: 2px; font-weight: bold; }
     </style>
     <script>
         /**
          * GLOBAL ERROR HANDLER FOR IMAGES
-         * Defined in head to ensure it's available before body images load
+         * Ensures that missing images don't leave blank gaps and show the required name.
          */
-        function imgErr(i) {
-            i.style.display = 'none';
-            if (i.parentElement) {
-                i.parentElement.classList.add('placeholder-active');
+        window.imgErr = function(img) {
+            img.style.display = 'none';
+            const parent = img.parentElement;
+            if (parent) {
+                parent.classList.add('placeholder-active');
+                const filename = img.getAttribute('src').split('/').pop();
+                
+                // Add a small label explaining which file is missing
+                if (!parent.querySelector('.img-hint')) {
+                    const hint = document.createElement('span');
+                    hint.className = 'img-hint';
+                    hint.innerText = "Missing: " + filename;
+                    parent.appendChild(hint);
+                }
             }
-        }
-        window.imgErr = imgErr;
+        };
     </script>
 </head>
 <body>
@@ -178,8 +190,8 @@
             <button class="btn-rect animate-up d-4" onclick="nextSlide()">START PRESENTATION</button>
         </div>
         <div class="hero-images-container animate-up d-2">
-            <div class="hero-img-box"><img src="sneaker.jpg" onerror="imgErr(this)"><span>[sneaker.jpg]</span></div>
-            <div class="hero-img-box"><img src="formal.jpg" onerror="imgErr(this)"><span>[formal.jpg]</span></div>
+            <div class="hero-img-box"><img src="sneaker.jpg" onerror="imgErr(this)"><span class="filename-label">sneaker.jpg</span></div>
+            <div class="hero-img-box"><img src="formal.jpg" onerror="imgErr(this)"><span class="filename-label">formal.jpg</span></div>
         </div>
     </div>
 </div>
@@ -198,7 +210,7 @@
         </div>
         <div class="animate-up d-3">
             <div class="img-container" style="height: 250px;"><img src="survey.jpg" onerror="imgErr(this)"></div>
-            <p style="font-size: 0.7rem; text-align: center; color: #999;">[survey.jpg - Pie chart of preferences]</p>
+            <p style="font-size: 0.7rem; text-align: center; color: #999;">Visual analysis of preference results</p>
         </div>
     </div>
 </div>
@@ -386,11 +398,18 @@
 </div>
 
 <script>
-    // Hide loader on load
-    window.addEventListener('load', () => {
+    // Initial setup
+    const hideLoader = () => {
         const loader = document.getElementById('loader');
-        if (loader) loader.style.display = 'none';
-    });
+        if (loader && loader.style.display !== 'none') {
+            loader.style.opacity = '0';
+            setTimeout(() => { loader.style.display = 'none'; }, 500);
+        }
+    };
+
+    // Hide loader on full load OR after 3 seconds timeout
+    window.addEventListener('load', hideLoader);
+    setTimeout(hideLoader, 3000);
 
     let cur = 1, tot = 11;
 
@@ -402,7 +421,8 @@
     function showSlide(n) {
         if (n > tot) n = 1;
         if (n < 1) n = tot;
-        document.querySelectorAll('.slide-container').forEach(s => s.classList.remove('active'));
+        const slides = document.querySelectorAll('.slide-container');
+        slides.forEach(s => s.classList.remove('active'));
         const slide = document.getElementById('slide' + n);
         if (slide) {
             slide.classList.add('active');
