@@ -120,10 +120,14 @@
         .img-container img { width: 100%; height: 100%; object-fit: cover; }
         .placeholder-active::before { content: "\f1c5"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 2.5rem; color: #ddd; }
 
-        .process-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; max-width: 1100px; }
-        .process-card { border: 2px solid #000; padding: 10px; background: #fff; text-align: center; }
-        .process-num { background: var(--vans-red); color: #fff; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: bold; }
-        .process-img-box { width: 100%; height: 80px; background: #eee; margin-bottom: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
+        /* MANUFACTURING DECK STYLES - Updated for larger images */
+        .process-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 1200px; height: 75vh; overflow-y: auto; padding: 10px; }
+        .process-card { border: 2px solid #000; padding: 15px; background: #fff; text-align: center; transition: transform 0.2s; }
+        .process-card:hover { transform: translateY(-5px); box-shadow: 4px 4px 0px var(--vans-red); }
+        .process-num { background: var(--vans-red); color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-weight: bold; font-family: var(--font-heading); }
+        .process-img-box { width: 100%; height: 150px; background: #eee; margin-bottom: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; border: 1px solid #ddd; }
+        .process-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .process-card strong { font-family: var(--font-heading); font-size: 1rem; display: block; margin-top: 5px; text-transform: uppercase; }
 
         .carousel-controls { position: absolute; bottom: 40px; right: 40px; display: flex; z-index: 10; }
         .control-btn { width: 60px; height: 60px; background: #000; color: #fff; border: 1px solid #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
@@ -132,26 +136,19 @@
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: #fff; padding: 40px; max-width: 800px; width: 100%; border: 10px solid var(--vans-red); }
         
-        /* Hint for missing images */
-        .img-hint { position: absolute; bottom: 5px; font-size: 9px; color: #ff4444; background: rgba(255,255,255,0.9); padding: 2px 4px; border-radius: 2px; font-weight: bold; }
+        .img-hint { position: absolute; bottom: 5px; font-size: 9px; color: #ff4444; background: rgba(255,255,255,0.9); padding: 2px 4px; border-radius: 2px; font-weight: bold; z-index: 10; }
     </style>
     <script>
-        /**
-         * GLOBAL ERROR HANDLER FOR IMAGES
-         * Ensures that missing images don't leave blank gaps and show the required name.
-         */
         window.imgErr = function(img) {
             img.style.display = 'none';
             const parent = img.parentElement;
             if (parent) {
                 parent.classList.add('placeholder-active');
-                const filename = img.getAttribute('src').split('/').pop();
-                
-                // Add a small label explaining which file is missing
+                let filename = img.getAttribute('src').split('/').pop();
                 if (!parent.querySelector('.img-hint')) {
                     const hint = document.createElement('span');
                     hint.className = 'img-hint';
-                    hint.innerText = "Missing: " + filename;
+                    hint.innerText = "Check GitHub: " + decodeURIComponent(filename);
                     parent.appendChild(hint);
                 }
             }
@@ -183,15 +180,22 @@
             <h2 class="animate-up d-1">ACCM507 Project - CA-1</h2>
             <h1 class="animate-up d-2">FINANCIAL<br>REPORTING.</h1>
             <p class="animate-up d-3">Comparative Analysis of Target Costing: Sneakers vs. Formal Shoes.</p>
-            <div class="animate-up d-4" style="border-left: 6px solid var(--vans-red); padding-left: 20px; margin: 20px 0;">
-                <p><strong>SUBMITTED TO:</strong> DR. SAKSHI THAKUR</p>
-                <p><strong>GROUP:</strong> Lyall, Sharma, Kaur, Singh, Dogra (Q2555)</p>
+            <div class="animate-up d-4" style="border-left: 6px solid var(--vans-red); padding-left: 20px; margin: 20px 0; font-size: 0.85rem; line-height: 1.4;">
+                <p><strong>SUBMITTED TO:</strong> DR. SAKSHI THAKUR | SECTION: Q2555</p>
+                <p style="margin-top: 5px;"><strong>GROUP MEMBERS:</strong></p>
+                <ul style="list-style: none; padding: 0;">
+                    <li>Enosh Lyall (12519521)</li>
+                    <li>Anuj Sharma (12518656)</li>
+                    <li>Sukhmanpreet Kaur (12505406)</li>
+                    <li>Ajaypal Singh (12507693)</li>
+                    <li>Abhishek Dogra (12512894)</li>
+                </ul>
             </div>
             <button class="btn-rect animate-up d-4" onclick="nextSlide()">START PRESENTATION</button>
         </div>
         <div class="hero-images-container animate-up d-2">
-            <div class="hero-img-box"><img src="sneaker.jpg" onerror="imgErr(this)"><span class="filename-label">sneaker.jpg</span></div>
-            <div class="hero-img-box"><img src="formal.jpg" onerror="imgErr(this)"><span class="filename-label">formal.jpg</span></div>
+            <div class="hero-img-box"><img src="Gemini_Generated_Image_i5hlqbi5hlqbi5hl.jpg" onerror="imgErr(this)"><span class="filename-label">Sneaker</span></div>
+            <div class="hero-img-box"><img src="Gemini_Generated_Image_7qzqlo7qzqlo7qzq.jpg" onerror="imgErr(this)"><span class="filename-label">Formal</span></div>
         </div>
     </div>
 </div>
@@ -209,8 +213,8 @@
             <button class="btn-rect animate-up d-4" style="margin-top: 20px;" onclick="openModal('surveyModal')">VIEW SURVEY DATA</button>
         </div>
         <div class="animate-up d-3">
-            <div class="img-container" style="height: 250px;"><img src="survey.jpg" onerror="imgErr(this)"></div>
-            <p style="font-size: 0.7rem; text-align: center; color: #999;">Visual analysis of preference results</p>
+            <div class="img-container" style="height: 250px;"><img src="fa-chart-pie.jpg" onerror="imgErr(this)"></div>
+            <p style="font-size: 0.7rem; text-align: center; color: #999;">Preference Analysis Chart</p>
         </div>
     </div>
 </div>
@@ -238,12 +242,12 @@
     <div class="slide-header animate-up d-1">Question 2: Specifications</div>
     <div class="hero-layout">
         <div class="card animate-up d-2">
-            <div class="img-container"><img src="sneaker_spec.jpg" onerror="imgErr(this)"></div>
+            <div class="img-container"><img src="Gemini_Generated_Image_i5hlqbi5hlqbi5hl.jpg" onerror="imgErr(this)"></div>
             <h2>Sneakers</h2>
             <p>Upper: Synthetic Mesh. Sole: Vulcanized Rubber. Insole: Memory Foam.</p>
         </div>
         <div class="card animate-up d-3">
-            <div class="img-container"><img src="formal_spec.jpg" onerror="imgErr(this)"></div>
+            <div class="img-container"><img src="Gemini_Generated_Image_7qzqlo7qzqlo7qzq.jpg" onerror="imgErr(this)"></div>
             <h2>Formal</h2>
             <p>Upper: Genuine Leather. Sole: TPR. Lining: Calf-skin.</p>
         </div>
@@ -254,12 +258,36 @@
 <div class="slide-container" id="slide5">
     <div class="slide-header animate-up d-1">Manufacturing Process</div>
     <div class="process-grid animate-up d-2">
-        <div class="process-card"><div class="process-num">1</div><div class="process-img-box"><img src="step1.jpg" onerror="imgErr(this)"></div><strong>Designing</strong></div>
-        <div class="process-card"><div class="process-num">2</div><div class="process-img-box"><img src="step2.jpg" onerror="imgErr(this)"></div><strong>Cutting</strong></div>
-        <div class="process-card"><div class="process-num">3</div><div class="process-img-box"><img src="step3.jpg" onerror="imgErr(this)"></div><strong>Closing</strong></div>
-        <div class="process-card"><div class="process-num">4</div><div class="process-img-box"><img src="step4.jpg" onerror="imgErr(this)"></div><strong>Lasting</strong></div>
-        <div class="process-card"><div class="process-num">5</div><div class="process-img-box"><img src="step5.jpg" onerror="imgErr(this)"></div><strong>Sole Attachment</strong></div>
-        <div class="process-card"><div class="process-num">6</div><div class="process-img-box"><img src="step6.jpg" onerror="imgErr(this)"></div><strong>Inspection</strong></div>
+        <div class="process-card">
+            <div class="process-num">1</div>
+            <div class="process-img-box"><img src="step1.jpg" onerror="imgErr(this)"></div>
+            <strong>Designing</strong>
+        </div>
+        <div class="process-card">
+            <div class="process-num">2</div>
+            <div class="process-img-box"><img src="Gemini_Generated_Image_7qzqlo7qzqlo7qzq.jpg" onerror="imgErr(this)"></div>
+            <strong>Cutting</strong>
+        </div>
+        <div class="process-card">
+            <div class="process-num">3</div>
+            <div class="process-img-box"><img src="Gemini_Generated_Image_i5hlqbi5hlqbi5hl.jpg" onerror="imgErr(this)"></div>
+            <strong>Closing</strong>
+        </div>
+        <div class="process-card">
+            <div class="process-num">4</div>
+            <div class="process-img-box"><img src="Gemini_Generated_Image_7qzqlo7qzqlo7qzq.jpg" onerror="imgErr(this)"></div>
+            <strong>Lasting</strong>
+        </div>
+        <div class="process-card">
+            <div class="process-num">5</div>
+            <div class="process-img-box"><img src="Gemini_Generated_Image_i5hlqbi5hlqbi5hl.jpg" onerror="imgErr(this)"></div>
+            <strong>Sole Attachment</strong>
+        </div>
+        <div class="process-card">
+            <div class="process-num">6</div>
+            <div class="process-img-box"><img src="Gemini_Generated_Image_7qzqlo7qzqlo7qzq.jpg" onerror="imgErr(this)"></div>
+            <strong>Inspection</strong>
+        </div>
     </div>
 </div>
 
@@ -286,14 +314,14 @@
     <div class="slide-header animate-up d-1">Question 3: Supplier Analysis</div>
     <div class="hero-layout">
         <div class="card animate-up d-2">
-            <h3>IndiaMART Proof</h3>
-            <div class="img-container" style="height: 120px;"><img src="indiamart.jpg" onerror="imgErr(this)"></div>
-            <p>Sourced Synthetic PU @ ₹100/m (Bulk).</p>
+            <h3>Supplier Proofs</h3>
+            <div class="img-container" style="height: 140px;"><img src="Screenshot%202025-12-17%20at%209.58.27%20PM.jpg" onerror="imgErr(this)"></div>
+            <p>Verified supplier rates via IndustryMART portals.</p>
         </div>
         <div class="card animate-up d-3">
             <h3>Vendor Quotation</h3>
-            <div class="img-container" style="height: 120px;"><img src="quotation.jpg" onerror="imgErr(this)"></div>
-            <p>Genuine Leather @ ₹200/unit (Verified).</p>
+            <div class="img-container" style="height: 140px;"><img src="Gemini_Generated_Image_7qzqlo7qzqlo7qzq.jpg" onerror="imgErr(this)"></div>
+            <p>Genuine Leather @ ₹200/unit sourced locally.</p>
         </div>
     </div>
 </div>
@@ -376,8 +404,8 @@
             <button class="btn-rect" onclick="showSlide(1)">REPLAY</button>
         </div>
         <div class="hero-images-container" style="filter: grayscale(1);">
-            <div class="hero-img-box"><img src="sneaker.jpg" onerror="imgErr(this)"></div>
-            <div class="hero-img-box"><img src="formal.jpg" onerror="imgErr(this)"></div>
+            <div class="hero-img-box"><img src="Gemini_Generated_Image_i5hlqbi5hlqbi5hl.jpg" onerror="imgErr(this)"></div>
+            <div class="hero-img-box"><img src="Gemini_Generated_Image_7qzqlo7qzqlo7qzq.jpg" onerror="imgErr(this)"></div>
         </div>
     </div>
 </div>
@@ -388,7 +416,6 @@
     <button class="control-btn" onclick="nextSlide()"><i class="fa-solid fa-chevron-right"></i></button>
 </div>
 
-<!-- MODAL -->
 <div class="modal" id="surveyModal">
     <div class="modal-content">
         <h2>Survey Proof Summary</h2>
@@ -398,57 +425,29 @@
 </div>
 
 <script>
-    // Initial setup
     const hideLoader = () => {
         const loader = document.getElementById('loader');
-        if (loader && loader.style.display !== 'none') {
+        if (loader) {
             loader.style.opacity = '0';
             setTimeout(() => { loader.style.display = 'none'; }, 500);
         }
     };
 
-    // Hide loader on full load OR after 3 seconds timeout
-    window.addEventListener('load', hideLoader);
-    setTimeout(hideLoader, 3000);
+    window.addEventListener('DOMContentLoaded', () => { setTimeout(hideLoader, 2000); });
 
     let cur = 1, tot = 11;
-
-    function updateCtr() {
-        const counter = document.getElementById('counter');
-        if (counter) counter.innerText = `${cur < 10 ? '0' + cur : cur} / ${tot}`;
-    }
-
+    function updateCtr() { document.getElementById('counter').innerText = `${cur < 10 ? '0' + cur : cur} / ${tot}`; }
     function showSlide(n) {
-        if (n > tot) n = 1;
-        if (n < 1) n = tot;
-        const slides = document.querySelectorAll('.slide-container');
-        slides.forEach(s => s.classList.remove('active'));
-        const slide = document.getElementById('slide' + n);
-        if (slide) {
-            slide.classList.add('active');
-            cur = n;
-            updateCtr();
-        }
+        if(n > tot) n = 1; if(n < 1) n = tot;
+        document.querySelectorAll('.slide-container').forEach(s => s.classList.remove('active'));
+        document.getElementById('slide' + n).classList.add('active');
+        cur = n; updateCtr();
     }
-
     function nextSlide() { showSlide(cur + 1); }
     function prevSlide() { showSlide(cur - 1); }
-
-    function openModal(id) {
-        const modal = document.getElementById(id);
-        if (modal) modal.style.display = 'flex';
-    }
-
-    function closeModal(id) {
-        const modal = document.getElementById(id);
-        if (modal) modal.style.display = 'none';
-    }
-
-    // Keyboard navigation
-    document.addEventListener('keydown', e => {
-        if (e.key === "ArrowRight") nextSlide();
-        if (e.key === "ArrowLeft") prevSlide();
-    });
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    document.addEventListener('keydown', e => { if(e.key === "ArrowRight") nextSlide(); if(e.key === "ArrowLeft") prevSlide(); });
 </script>
 </body>
 </html>
