@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UrbanCobbler - Financial Report</title>
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
         :root {
             --bg-color: #ffffff;
@@ -30,12 +33,14 @@
             font-family: var(--font-body); color: var(--text-primary);
         }
 
+        /* Texture Overlay for gritty feel */
         .texture-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
             pointer-events: none; z-index: 9999;
         }
 
+        /* Loader */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 10000;
@@ -44,44 +49,48 @@
             transition: opacity 0.5s ease;
         }
 
-        .top-strip {
-            position: fixed; top: 0; left: 0; width: 100%; height: var(--top-strip-height);
-            background-color: var(--vans-black); z-index: 1002;
-            display: flex; justify-content: flex-end; align-items: center;
-            padding: 0 40px; font-size: 11px; font-weight: 700; letter-spacing: 1px;
-            color: #fff; text-transform: uppercase;
-        }
-        .top-strip ul { display: flex; gap: 25px; list-style: none; margin: 0; padding: 0; }
-
+        /* Navigation */
         .main-nav {
-            position: fixed; top: var(--top-strip-height); left: 0; width: 100%; height: var(--nav-height);
+            position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-height);
             background-color: #fff; z-index: 1001; display: flex; justify-content: space-between;
             align-items: center; padding: 0 40px; border-bottom: 2px solid #000;
         }
-        .nav-links { display: flex; gap: 20px; list-style: none; font-weight: 700; font-size: 15px; font-family: var(--font-heading); text-transform: uppercase; }
-        .nav-links li { cursor: pointer; }
-        .nav-links li:hover { color: var(--vans-red); }
-
+        
         .brand-logo {
             background-color: var(--vans-red); color: white; padding: 5px 15px;
             font-family: var(--font-heading); font-weight: 700; font-size: 24px;
             letter-spacing: -1px; transform: skew(-5deg); cursor: pointer;
+            transition: transform 0.2s;
         }
+        .brand-logo:hover { transform: skew(-5deg) scale(1.05); }
 
+        .nav-links { display: flex; gap: 20px; list-style: none; font-weight: 700; font-size: 15px; font-family: var(--font-heading); text-transform: uppercase; margin: 0; padding: 0; }
+        .nav-links li { cursor: pointer; position: relative; }
+        .nav-links li:hover { color: var(--vans-red); }
+        .nav-links li::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0%; height: 2px;
+            background: var(--vans-red); transition: width 0.3s;
+        }
+        .nav-links li:hover::after { width: 100%; }
+
+        /* Checker strip decoration */
         .checker-strip {
             width: 100%; height: 15px;
             background-image: linear-gradient(45deg, #000 25%, transparent 25%), linear-gradient(-45deg, #000 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #000 75%), linear-gradient(-45deg, transparent 75%, #000 75%);
             background-color: #fff; background-size: 20px 20px; margin-bottom: 30px;
         }
 
+        /* Slide Layout */
         .slide-container {
-            position: absolute; top: 110px; left: 0; width: 100%; height: calc(100% - 110px);
+            position: absolute; top: var(--nav-height); left: 0; width: 100%; height: calc(100% - var(--nav-height));
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             padding: 40px; background: #fff; opacity: 0; pointer-events: none; z-index: 0;
             transition: opacity 0.5s ease-out, transform 0.5s ease-out; transform: translateY(20px);
+            overflow-y: auto; /* Allow scrolling if content is too tall */
         }
         .slide-container.active { opacity: 1; pointer-events: all; z-index: 1; transform: translateY(0); }
 
+        /* Animations */
         .animate-up { opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .active .animate-up { opacity: 1; transform: translateY(0); }
         .active .d-1 { transition-delay: 0.1s; }
@@ -89,51 +98,109 @@
         .active .d-3 { transition-delay: 0.3s; }
         .active .d-4 { transition-delay: 0.4s; }
 
+        /* Typography */
         h1 { font-family: var(--font-heading); font-size: 4.5rem; text-transform: uppercase; line-height: 0.9; margin: 0 0 20px 0; }
-        h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--vans-red); text-transform: uppercase; }
-        .slide-header { font-family: var(--font-heading); font-size: 3rem; text-transform: uppercase; font-weight: 700; margin-bottom: 20px; text-align: center; }
+        h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--vans-red); text-transform: uppercase; margin-top: 0; }
+        .slide-header { font-family: var(--font-heading); font-size: 3rem; text-transform: uppercase; font-weight: 700; margin-bottom: 20px; text-align: center; width: 100%; }
 
+        /* Buttons */
         .btn-rect {
             background-color: #000; color: #fff; padding: 12px 30px; font-family: var(--font-heading);
             font-weight: 700; text-transform: uppercase; border: 2px solid #000; cursor: pointer; transition: all 0.2s;
+            display: inline-block;
         }
         .btn-rect:hover { background-color: var(--vans-red); border-color: var(--vans-red); }
+        .btn-outline {
+             background-color: transparent; color: #000; padding: 12px 30px; font-family: var(--font-heading);
+            font-weight: 700; text-transform: uppercase; border: 2px solid #000; cursor: pointer; transition: all 0.2s;
+            display: inline-block;
+        }
+        .btn-outline:hover { background-color: #000; color: #fff; }
 
-        .hero-layout { display: grid; grid-template-columns: 1fr 1fr; width: 100%; height: 100%; align-items: center; gap: 40px; }
+
+        /* Layout Grids */
+        .hero-layout { display: grid; grid-template-columns: 1fr 1fr; width: 100%; height: 100%; align-items: center; gap: 40px; max-width: 1400px; margin: 0 auto; }
         
         .hero-images-container { width: 100%; height: 100%; display: grid; grid-template-rows: 1fr 1fr; border-left: 10px solid #000; }
         .hero-img-box { width: 100%; height: 100%; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 5px solid #000; position: relative; }
         .hero-img-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .hero-img-box span.filename-label { position: absolute; bottom: 8px; font-size: 0.6rem; font-weight: bold; color: #999; z-index: 5; }
+        .hero-img-box span.filename-label { position: absolute; bottom: 8px; font-size: 0.6rem; font-weight: bold; color: #999; z-index: 5; background: rgba(255,255,255,0.8); padding: 2px 5px; }
+        
+        /* Placeholder styling for broken images */
         .hero-img-box.placeholder-active::before { content: "\f188"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 3rem; color: #ddd; }
+        .img-container.placeholder-active::before { content: "\f1c5"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 2.5rem; color: #ddd; }
 
+        /* Tables */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; border: 2px solid #000; }
         th { text-align: left; padding: 10px; background-color: #000; color: #fff; font-family: var(--font-heading); text-transform: uppercase; font-size: 0.9rem; }
         td { padding: 8px 10px; border-bottom: 1px solid #eee; font-weight: 500; font-size: 0.85rem; }
         .total-row { background-color: #000 !important; color: #fff !important; font-weight: 700; }
         .subtotal-row { background-color: #f0f0f0; font-weight: 700; }
+        .highlight-row { background-color: rgba(201, 0, 43, 0.1); }
 
-        .card { background: #fff; border: 2px solid #000; padding: 15px; position: relative; }
-        .highlight-row { background-color: rgba(201, 0, 43, 0.05); }
-
+        /* Cards */
+        .card { background: #fff; border: 2px solid #000; padding: 15px; position: relative; box-shadow: 5px 5px 0px rgba(0,0,0,0.1); }
         .img-container { width: 100%; height: 180px; margin-bottom: 15px; border: 1px solid #ccc; background: #fafafa; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
         .img-container img { width: 100%; height: 100%; object-fit: cover; }
-        .placeholder-active::before { content: "\f1c5"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 2.5rem; color: #ddd; }
 
-        .process-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; max-width: 1100px; }
-        .process-card { border: 2px solid #000; padding: 10px; background: #fff; text-align: center; }
+        /* Process Steps - Updated for Horizontal Scrolling */
+        .process-scroll-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            width: 100%;
+            padding: 20px 5px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            /* Scrollbar styling */
+            scrollbar-width: thin;
+            scrollbar-color: #000 #f1f1f1;
+        }
+        .process-scroll-container::-webkit-scrollbar { height: 8px; }
+        .process-scroll-container::-webkit-scrollbar-track { background: #f1f1f1; }
+        .process-scroll-container::-webkit-scrollbar-thumb { background: #000; border-radius: 4px; }
+        .process-scroll-container::-webkit-scrollbar-thumb:hover { background: var(--vans-red); }
+
+        .process-card { 
+            border: 2px solid #000; padding: 15px; background: #fff; text-align: center; 
+            min-width: 250px; /* Fixed width to ensure horizontal layout */
+            flex: 0 0 auto;
+            transition: transform 0.2s;
+        }
+        .process-card:hover { transform: translateY(-5px); box-shadow: 5px 5px 0px var(--vans-red); }
         .process-num { background: var(--vans-red); color: #fff; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: bold; }
-        .process-img-box { width: 100%; height: 80px; background: #eee; margin-bottom: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
+        .process-img-box { width: 100%; height: 150px; background: #eee; margin-bottom: 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
+        .process-img-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        .carousel-controls { position: absolute; bottom: 40px; right: 40px; display: flex; z-index: 10; }
-        .control-btn { width: 60px; height: 60px; background: #000; color: #fff; border: 1px solid #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-        .counter { position: absolute; bottom: 50px; right: 180px; font-family: var(--font-heading); font-size: 2rem; font-weight: 700; }
+        /* Controls */
+        .carousel-controls { position: absolute; bottom: 40px; right: 40px; display: flex; z-index: 10; gap: 10px; }
+        .control-btn { width: 50px; height: 50px; background: #000; color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: background 0.2s; }
+        .control-btn:hover { background: var(--vans-red); }
+        .counter { position: absolute; bottom: 45px; right: 170px; font-family: var(--font-heading); font-size: 2rem; font-weight: 700; z-index: 10; }
         
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: #fff; padding: 40px; max-width: 800px; width: 100%; border: 10px solid var(--vans-red); }
+        .modal-content { 
+            background: #fff; padding: 40px; max-width: 800px; width: 100%; 
+            border: 10px solid var(--vans-red); position: relative;
+            /* Added to prevent clipping on small screens */
+            max-height: 90vh; 
+            overflow-y: auto;
+        }
         
         /* Hint for missing images */
-        .img-hint { position: absolute; bottom: 5px; font-size: 9px; color: #ff4444; background: rgba(255,255,255,0.9); padding: 2px 4px; border-radius: 2px; font-weight: bold; }
+        .img-hint { position: absolute; bottom: 5px; left: 5px; font-size: 10px; color: #fff; background: #ff4444; padding: 2px 4px; border-radius: 2px; font-weight: bold; pointer-events: none; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-layout { grid-template-columns: 1fr; grid-template-rows: auto auto; overflow-y: auto; display: block; }
+            .hero-images-container { border-left: none; border-top: 10px solid #000; height: 300px; margin-top: 20px; }
+            h1 { font-size: 3rem; }
+            .slide-header { font-size: 2rem; }
+            .nav-links { display: none; } /* Hide nav on mobile for simplicity */
+            .counter { right: 20px; bottom: 100px; font-size: 1.5rem; }
+            .carousel-controls { right: 20px; bottom: 20px; }
+        }
     </style>
     <script>
         /**
@@ -145,7 +212,8 @@
             const parent = img.parentElement;
             if (parent) {
                 parent.classList.add('placeholder-active');
-                const filename = img.getAttribute('src').split('/').pop();
+                const src = img.getAttribute('src');
+                const filename = src ? src.split('/').pop() : 'Image';
                 
                 // Add a small label explaining which file is missing
                 if (!parent.querySelector('.img-hint')) {
@@ -160,9 +228,11 @@
 </head>
 <body>
 
+<!-- Loader -->
 <div id="loader">URBAN COBBLER</div>
 <div class="texture-overlay"></div>
 
+<!-- Navigation -->
 <nav class="main-nav">
     <div class="brand-logo" onclick="showSlide(1)">URBAN COBBLER</div>
     <ul class="nav-links">
@@ -178,20 +248,22 @@
 <!-- SLIDE 1: HERO -->
 <div class="slide-container active" id="slide1">
     <div class="hero-layout">
-        <div class="hero-text" style="padding: 40px;">
+        <div class="hero-text" style="padding: 20px 0;">
             <div class="checker-strip animate-up d-1" style="width: 200px;"></div>
             <h2 class="animate-up d-1">ACCM507 Project - CA-1</h2>
             <h1 class="animate-up d-2">FINANCIAL<br>REPORTING.</h1>
             <p class="animate-up d-3">Comparative Analysis of Target Costing: Sneakers vs. Formal Shoes.</p>
             <div class="animate-up d-4" style="border-left: 6px solid var(--vans-red); padding-left: 20px; margin: 20px 0;">
                 <p><strong>SUBMITTED TO:</strong> DR. SAKSHI THAKUR</p>
-                <p><strong>GROUP:</strong> Lyall, Sharma, Kaur, Singh, Dogra (Q2555)</p>
             </div>
-            <button class="btn-rect animate-up d-4" onclick="nextSlide()">START PRESENTATION</button>
+            <div class="animate-up d-4" style="display: flex; gap: 15px;">
+                <button class="btn-rect" onclick="nextSlide()">START PRESENTATION</button>
+                <button class="btn-outline" onclick="openModal('crewModal')">THE CREW</button>
+            </div>
         </div>
         <div class="hero-images-container animate-up d-2">
-            <div class="hero-img-box"><img src="sneaker.jpg" onerror="imgErr(this)"><span class="filename-label">sneaker.jpg</span></div>
-            <div class="hero-img-box"><img src="formal.jpg" onerror="imgErr(this)"><span class="filename-label">formal.jpg</span></div>
+            <div class="hero-img-box"><img src="sneaker.jpg" alt="Sneaker" onerror="imgErr(this)"><span class="filename-label">sneaker.jpg</span></div>
+            <div class="hero-img-box"><img src="formal.jpg" alt="Formal Shoe" onerror="imgErr(this)"><span class="filename-label">formal.jpg</span></div>
         </div>
     </div>
 </div>
@@ -209,7 +281,7 @@
             <button class="btn-rect animate-up d-4" style="margin-top: 20px;" onclick="openModal('surveyModal')">VIEW SURVEY DATA</button>
         </div>
         <div class="animate-up d-3">
-            <div class="img-container" style="height: 250px;"><img src="survey.jpg" onerror="imgErr(this)"></div>
+            <div class="img-container" style="height: 250px;"><img src="survey.jpg" alt="Survey Graph" onerror="imgErr(this)"></div>
             <p style="font-size: 0.7rem; text-align: center; color: #999;">Visual analysis of preference results</p>
         </div>
     </div>
@@ -218,19 +290,21 @@
 <!-- SLIDE 3: COMPETITOR ANALYSIS (Q1) -->
 <div class="slide-container" id="slide3">
     <div class="slide-header animate-up d-1">Competitor Pricing Matrix</div>
-    <table class="animate-up d-2">
-        <thead>
-            <tr><th>Competitor</th><th>Price Range (₹)</th><th>Target Segment</th><th>Our Positioning</th></tr>
-        </thead>
-        <tbody>
-            <tr><td>Dass Shoe Co.</td><td>2,500 - 3,000</td><td>Premium / Local</td><td>Niche Quality</td></tr>
-            <tr><td>Bata</td><td>1,200 - 3,500</td><td>Mass Market</td><td>Brand Trust</td></tr>
-            <tr class="highlight-row"><td><strong>UrbanCobbler</strong></td><td><strong>1,000 - 1,200</strong></td><td><strong>University / Pro</strong></td><td><strong>Value Disrupter</strong></td></tr>
-            <tr><td>Red Tape</td><td>1,000 - 2,500</td><td>Lifestyle</td><td>Aggressive Online</td></tr>
-            <tr><td>Tracer</td><td>900 - 1,200</td><td>Budget</td><td>Local Accessibility</td></tr>
-        </tbody>
-    </table>
-    <p class="animate-up d-3" style="margin-top: 20px; font-weight: bold;">Determined Selling Price: ₹1,200 (Formal) / ₹1,000 (Sneaker)</p>
+    <div style="width: 100%; max-width: 900px;">
+        <table class="animate-up d-2">
+            <thead>
+                <tr><th>Competitor</th><th>Price Range (₹)</th><th>Target Segment</th><th>Our Positioning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Dass Shoe Co.</td><td>2,500 - 3,000</td><td>Premium / Local</td><td>Niche Quality</td></tr>
+                <tr><td>Bata</td><td>1,200 - 3,500</td><td>Mass Market</td><td>Brand Trust</td></tr>
+                <tr class="highlight-row"><td><strong>UrbanCobbler</strong></td><td><strong>1,000 - 1,200</strong></td><td><strong>University / Pro</strong></td><td><strong>Value Disrupter</strong></td></tr>
+                <tr><td>Red Tape</td><td>1,000 - 2,500</td><td>Lifestyle</td><td>Aggressive Online</td></tr>
+                <tr><td>Tracer</td><td>900 - 1,200</td><td>Budget</td><td>Local Accessibility</td></tr>
+            </tbody>
+        </table>
+        <p class="animate-up d-3" style="margin-top: 20px; font-weight: bold; text-align: center;">Determined Selling Price: ₹1,200 (Formal) / ₹1,000 (Sneaker)</p>
+    </div>
 </div>
 
 <!-- SLIDE 4: PRODUCT SPECS (Q2) -->
@@ -238,12 +312,12 @@
     <div class="slide-header animate-up d-1">Question 2: Specifications</div>
     <div class="hero-layout">
         <div class="card animate-up d-2">
-            <div class="img-container"><img src="sneaker_spec.jpg" onerror="imgErr(this)"></div>
+            <div class="img-container"><img src="sneaker_spec.jpg" alt="Sneaker Spec" onerror="imgErr(this)"></div>
             <h2>Sneakers</h2>
             <p>Upper: Synthetic Mesh. Sole: Vulcanized Rubber. Insole: Memory Foam.</p>
         </div>
         <div class="card animate-up d-3">
-            <div class="img-container"><img src="formal_spec.jpg" onerror="imgErr(this)"></div>
+            <div class="img-container"><img src="formal_spec.jpg" alt="Formal Spec" onerror="imgErr(this)"></div>
             <h2>Formal</h2>
             <p>Upper: Genuine Leather. Sole: TPR. Lining: Calf-skin.</p>
         </div>
@@ -253,32 +327,35 @@
 <!-- SLIDE 5: MANUFACTURING PROCESS (Q2) -->
 <div class="slide-container" id="slide5">
     <div class="slide-header animate-up d-1">Manufacturing Process</div>
-    <div class="process-grid animate-up d-2">
-        <div class="process-card"><div class="process-num">1</div><div class="process-img-box"><img src="step1.jpg" onerror="imgErr(this)"></div><strong>Designing</strong></div>
-        <div class="process-card"><div class="process-num">2</div><div class="process-img-box"><img src="step2.jpg" onerror="imgErr(this)"></div><strong>Cutting</strong></div>
-        <div class="process-card"><div class="process-num">3</div><div class="process-img-box"><img src="step3.jpg" onerror="imgErr(this)"></div><strong>Closing</strong></div>
-        <div class="process-card"><div class="process-num">4</div><div class="process-img-box"><img src="step4.jpg" onerror="imgErr(this)"></div><strong>Lasting</strong></div>
-        <div class="process-card"><div class="process-num">5</div><div class="process-img-box"><img src="step5.jpg" onerror="imgErr(this)"></div><strong>Sole Attachment</strong></div>
-        <div class="process-card"><div class="process-num">6</div><div class="process-img-box"><img src="step6.jpg" onerror="imgErr(this)"></div><strong>Inspection</strong></div>
+    <!-- Horizontal Scroller Container -->
+    <div class="process-scroll-container animate-up d-2">
+        <div class="process-card"><div class="process-num">1</div><div class="process-img-box"><img src="step1.jpg" alt="Design" onerror="imgErr(this)"></div><strong>Designing</strong></div>
+        <div class="process-card"><div class="process-num">2</div><div class="process-img-box"><img src="step2.jpg" alt="Cut" onerror="imgErr(this)"></div><strong>Cutting</strong></div>
+        <div class="process-card"><div class="process-num">3</div><div class="process-img-box"><img src="step3.jpg" alt="Close" onerror="imgErr(this)"></div><strong>Closing</strong></div>
+        <div class="process-card"><div class="process-num">4</div><div class="process-img-box"><img src="step4.jpg" alt="Last" onerror="imgErr(this)"></div><strong>Lasting</strong></div>
+        <div class="process-card"><div class="process-num">5</div><div class="process-img-box"><img src="step5.jpg" alt="Sole" onerror="imgErr(this)"></div><strong>Sole Attachment</strong></div>
+        <div class="process-card"><div class="process-num">6</div><div class="process-img-box"><img src="step6.jpg" alt="Inspect" onerror="imgErr(this)"></div><strong>Inspection</strong></div>
     </div>
 </div>
 
 <!-- SLIDE 6: TARGET COSTING (Q2) -->
 <div class="slide-container" id="slide6">
     <div class="slide-header animate-up d-1">Target Cost Derivation</div>
-    <div class="animate-up d-2" style="background: #f9f9f9; padding: 15px; border-left: 5px solid var(--vans-red); margin-bottom: 15px;">
-        <p><strong>Criterion:</strong> 20% Profit Margin (Industry standard for footwear retail sustainability).</p>
+    <div style="width: 100%; max-width: 800px;">
+        <div class="animate-up d-2" style="background: #f9f9f9; padding: 15px; border-left: 5px solid var(--vans-red); margin-bottom: 15px;">
+            <p><strong>Criterion:</strong> 20% Profit Margin (Industry standard for footwear retail sustainability).</p>
+        </div>
+        <table class="animate-up d-3">
+            <thead>
+                <tr><th>Particulars</th><th>Formal Shoes (₹)</th><th>Sneakers (₹)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Target Selling Price</td><td>1,200</td><td>1,000</td></tr>
+                <tr><td>Less: Profit @ 20%</td><td>(240)</td><td>(200)</td></tr>
+                <tr class="total-row"><td>DERIVED TARGET COST</td><td>960</td><td>800</td></tr>
+            </tbody>
+        </table>
     </div>
-    <table class="animate-up d-3">
-        <thead>
-            <tr><th>Particulars</th><th>Formal Shoes (₹)</th><th>Sneakers (₹)</th></tr>
-        </thead>
-        <tbody>
-            <tr><td>Target Selling Price</td><td>1,200</td><td>1,000</td></tr>
-            <tr><td>Less: Profit @ 20%</td><td>(240)</td><td>(200)</td></tr>
-            <tr class="total-row"><td>DERIVED TARGET COST</td><td>960</td><td>800</td></tr>
-        </tbody>
-    </table>
 </div>
 
 <!-- SLIDE 7: SUPPLIER RESEARCH (Q3) -->
@@ -287,12 +364,12 @@
     <div class="hero-layout">
         <div class="card animate-up d-2">
             <h3>IndiaMART Proof</h3>
-            <div class="img-container" style="height: 120px;"><img src="indiamart.jpg" onerror="imgErr(this)"></div>
+            <div class="img-container" style="height: 120px;"><img src="indiamart.jpg" alt="IndiaMart" onerror="imgErr(this)"></div>
             <p>Sourced Synthetic PU @ ₹100/m (Bulk).</p>
         </div>
         <div class="card animate-up d-3">
             <h3>Vendor Quotation</h3>
-            <div class="img-container" style="height: 120px;"><img src="quotation.jpg" onerror="imgErr(this)"></div>
+            <div class="img-container" style="height: 120px;"><img src="quotation.jpg" alt="Quote" onerror="imgErr(this)"></div>
             <p>Genuine Leather @ ₹200/unit (Verified).</p>
         </div>
     </div>
@@ -301,9 +378,9 @@
 <!-- SLIDE 8: ACTUAL COST SHEET (Q3) -->
 <div class="slide-container" id="slide8">
     <div class="slide-header animate-up d-1">Detailed Cost Sheet</div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 1200px;">
+    <div class="hero-layout" style="align-items: start;">
         <div class="animate-up d-2">
-            <h4 style="text-align: center;">SNEAKERS</h4>
+            <h4 style="text-align: center; font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 5px;">SNEAKERS</h4>
             <table>
                 <tr><td>Material Consumed</td><td>470</td></tr>
                 <tr><td>Direct Wages</td><td>80</td></tr>
@@ -317,7 +394,7 @@
             </table>
         </div>
         <div class="animate-up d-3">
-            <h4 style="text-align: center;">FORMAL</h4>
+            <h4 style="text-align: center; font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 5px;">FORMAL</h4>
             <table>
                 <tr><td>Material Consumed</td><td>600</td></tr>
                 <tr><td>Direct Wages</td><td>100</td></tr>
@@ -336,18 +413,20 @@
 <!-- SLIDE 9: CONFORMITY (Q4) -->
 <div class="slide-container" id="slide9">
     <div class="slide-header animate-up d-1">Question 4: Conformity Analysis</div>
-    <table class="animate-up d-2">
-        <thead>
-            <tr><th>Product</th><th>Target Cost (₹)</th><th>Actual Cost (₹)</th><th>Variance</th></tr>
-        </thead>
-        <tbody>
-            <tr><td>Sneakers</td><td>800</td><td>750</td><td>50 (F)</td></tr>
-            <tr><td>Formal Shoes</td><td>960</td><td>900</td><td>60 (F)</td></tr>
-        </tbody>
-    </table>
-    <div class="card animate-up d-3" style="margin-top: 20px;">
-        <strong>Conformity Steps:</strong>
-        <p>1. Bulk negotiation for mesh (15% discount). 2. Automated cutting to reduce waste. 3. Labor efficiency training.</p>
+    <div style="width: 100%; max-width: 800px;">
+        <table class="animate-up d-2">
+            <thead>
+                <tr><th>Product</th><th>Target Cost (₹)</th><th>Actual Cost (₹)</th><th>Variance</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Sneakers</td><td>800</td><td>750</td><td>50 (F)</td></tr>
+                <tr><td>Formal Shoes</td><td>960</td><td>900</td><td>60 (F)</td></tr>
+            </tbody>
+        </table>
+        <div class="card animate-up d-3" style="margin-top: 20px;">
+            <strong>Conformity Steps Taken:</strong>
+            <p style="margin-top: 5px;">1. Bulk negotiation for mesh (15% discount).<br>2. Automated cutting to reduce waste.<br>3. Labor efficiency training to reduce per-unit time.</p>
+        </div>
     </div>
 </div>
 
@@ -376,24 +455,42 @@
             <button class="btn-rect" onclick="showSlide(1)">REPLAY</button>
         </div>
         <div class="hero-images-container" style="filter: grayscale(1);">
-            <div class="hero-img-box"><img src="sneaker.jpg" onerror="imgErr(this)"></div>
-            <div class="hero-img-box"><img src="formal.jpg" onerror="imgErr(this)"></div>
+            <div class="hero-img-box"><img src="sneaker.jpg" alt="End Sneaker" onerror="imgErr(this)"></div>
+            <div class="hero-img-box"><img src="formal.jpg" alt="End Formal" onerror="imgErr(this)"></div>
         </div>
     </div>
 </div>
 
+<!-- Controls -->
 <span class="counter" id="counter">01 / 11</span>
 <div class="carousel-controls">
     <button class="control-btn" onclick="prevSlide()"><i class="fa-solid fa-chevron-left"></i></button>
     <button class="control-btn" onclick="nextSlide()"><i class="fa-solid fa-chevron-right"></i></button>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL: SURVEY -->
 <div class="modal" id="surveyModal">
     <div class="modal-content">
         <h2>Survey Proof Summary</h2>
         <p>Survey ID: UC-MARKET-2025. Responses: 50. Method: Digital Questionnaire.</p>
-        <button class="btn-rect" onclick="closeModal('surveyModal')">CLOSE</button>
+        <div style="margin-top: 20px; font-size: 0.9rem; background: #eee; padding: 10px;">
+            <p><strong>Q: Preferred Footwear?</strong> Sneaker (42.9%), Formal (25%), Casual (32.1%)</p>
+            <p><strong>Q: Budget?</strong> < ₹1000 (30%), ₹1000-1500 (50%), > ₹1500 (20%)</p>
+        </div>
+        <button class="btn-rect" style="margin-top: 20px;" onclick="closeModal('surveyModal')">CLOSE</button>
+    </div>
+</div>
+
+<!-- MODAL: CREW -->
+<div class="modal" id="crewModal">
+    <div class="modal-content" style="text-align: center;">
+        <h2 style="font-size: 3rem; margin-bottom: 10px; color: var(--vans-red);">THE CREW</h2>
+        <div class="checker-strip" style="width: 100px; height: 10px; margin: 0 auto 20px auto;"></div>
+        <div style="font-family: var(--font-heading); font-size: 1.5rem; text-transform: uppercase; line-height: 1.6; color: #000;">
+            Enosh Lyall<br>Anuj Sharma<br>Sukhmanpreet Kaur<br>Ajaypal Singh<br>Abhishek Dogra
+        </div>
+        <p style="margin-top: 20px; color: #666; font-weight: bold;">Group Q2555</p>
+        <button class="btn-rect" style="margin-top: 30px;" onclick="closeModal('crewModal')">CLOSE</button>
     </div>
 </div>
 
@@ -409,7 +506,7 @@
 
     // Hide loader on full load OR after 3 seconds timeout
     window.addEventListener('load', hideLoader);
-    setTimeout(hideLoader, 3000);
+    setTimeout(hideLoader, 3000); // Fallback
 
     let cur = 1, tot = 11;
 
