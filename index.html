@@ -106,7 +106,23 @@
         .btn-rect:hover { background-color: var(--vans-red); border-color: var(--vans-red); }
 
         .hero-layout { display: grid; grid-template-columns: 1fr 1fr; width: 100%; height: 100%; align-items: center; gap: 40px; }
-        .hero-image { width: 100%; height: 100%; background-size: cover; background-position: center; border-left: 10px solid #000; }
+        
+        /* Updated Hero Image Container for two images */
+        .hero-images-container { 
+            width: 100%; 
+            height: 100%; 
+            display: grid; 
+            grid-template-rows: 1fr 1fr; 
+            border-left: 10px solid #000;
+        }
+        .hero-img-box {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            border-bottom: 5px solid #000;
+        }
+        .hero-img-box:last-child { border-bottom: none; }
 
         .grid-layout { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; max-width: 1400px; }
         .card { background: #fff; border: 2px solid #000; padding: 15px; transition: transform 0.2s; }
@@ -114,7 +130,7 @@
 
         table { width: 100%; max-width: 1000px; border-collapse: collapse; margin-top: 10px; border: 2px solid #000; }
         th { text-align: left; padding: 12px; background-color: #000; color: #fff; font-family: var(--font-heading); text-transform: uppercase; }
-        td { padding: 12px; border-bottom: 1px solid #ccc; font-weight: 500; }
+        td { padding: 12px; border-bottom: 1px solid #ccc; font-weight: 500; font-size: 0.95rem; }
         tr:nth-child(even) { background-color: #f9f9f9; }
 
         .proof-badge { background: #e0f2f1; color: #00695c; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; display: inline-block; margin-top: 5px; }
@@ -132,6 +148,11 @@
 
         .process-step { display: flex; align-items: center; gap: 20px; margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 10px; }
         .step-num { width: 40px; height: 40px; background: var(--vans-red); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 1.2rem; }
+        
+        .highlight-row { background-color: rgba(201, 0, 43, 0.05) !important; border: 2px solid var(--vans-red); }
+        .brand-tag { background: var(--vans-red); color: #fff; padding: 2px 6px; font-size: 0.7rem; font-weight: 700; border-radius: 3px; }
+        
+        .spec-img { width: 100%; height: 200px; object-fit: cover; margin-bottom: 15px; border: 1px solid #ccc; }
     </style>
 </head>
 <body>
@@ -171,7 +192,11 @@
                 <button class="btn-rect" onclick="nextSlide()">ENTER ANALYSIS</button>
             </div>
         </div>
-        <div class="hero-image animate-up d-2" style="background-image: url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=1000');"></div>
+        <!-- Hero Right Column with two images -->
+        <div class="hero-images-container animate-up d-2">
+            <div class="hero-img-box" style="background-image: url('https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&q=80&w=1000');"></div>
+            <div class="hero-img-box" style="background-image: url('https://images.unsplash.com/photo-1533867617858-e7b97e060509?auto=format&fit=crop&q=80&w=1000');"></div>
+        </div>
     </div>
 </div>
 
@@ -207,6 +232,7 @@
 <!-- SLIDE 3: COMPETITOR ANALYSIS (Q1) -->
 <div class="slide-container" id="slide3">
     <div class="slide-header animate-up d-1">Competitor Analysis Matrix</div>
+    <p class="animate-up d-2" style="text-align: center; margin-top: -15px; margin-bottom: 15px; font-weight: 500;">Where UrbanCobbler fits in the market landscape:</p>
     <table class="animate-up d-2">
         <thead>
             <tr>
@@ -229,6 +255,12 @@
                 <td>1,200 - 3,500</td>
                 <td>Brand trust, durability.</td>
             </tr>
+            <tr class="highlight-row">
+                <td><strong>UrbanCobbler <span class="brand-tag">YOU</span></strong></td>
+                <td>Value-Mid Range</td>
+                <td>1,000 - 1,200</td>
+                <td><strong>Value Disrupter:</strong> High specs at entry-level cost.</td>
+            </tr>
             <tr>
                 <td><strong>Red Tape</strong></td>
                 <td>Lifestyle</td>
@@ -244,7 +276,7 @@
         </tbody>
     </table>
     <div class="animate-up d-3" style="margin-top: 20px; background: #000; color: #fff; padding: 20px;">
-        <p><strong>DETERMINED TARGET PRICE:</strong> Based on the above, UrbanCobbler targets the ₹1,000 (Sneaker) and ₹1,200 (Formal) sweet spot to disrupt the mid-range market.</p>
+        <p><strong>DETERMINED TARGET PRICE:</strong> Based on the above, UrbanCobbler targets the ₹1,000 (Sneaker) and ₹1,200 (Formal) sweet spot to disrupt the mid-range market by offering superior materials than Tracer at a similar price.</p>
     </div>
 </div>
 
@@ -253,6 +285,7 @@
     <div class="slide-header animate-up d-1">Product Specifications</div>
     <div class="hero-layout">
         <div class="card animate-up d-2">
+            <img src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&q=80&w=800" class="spec-img" alt="Generic Sneaker">
             <h3 style="font-family: var(--font-heading); border-bottom: 2px solid var(--vans-red);">SNEAKERS</h3>
             <p><strong>Upper:</strong> Synthetic Mesh / Knit Composite</p>
             <p><strong>Cushioning:</strong> EVA Foam Midsole</p>
@@ -260,6 +293,7 @@
             <p><strong>Insole:</strong> High-density memory foam</p>
         </div>
         <div class="card animate-up d-3">
+            <img src="https://images.unsplash.com/photo-1533867617858-e7b97e060509?auto=format&fit=crop&q=80&w=800" class="spec-img" alt="Generic Formal Shoe">
             <h3 style="font-family: var(--font-heading); border-bottom: 2px solid #000;">FORMAL SHOES</h3>
             <p><strong>Upper:</strong> Genuine High-Grade Leather</p>
             <p><strong>Lining:</strong> Breathable soft calf-skin</p>
@@ -364,26 +398,40 @@
 
 <!-- SLIDE 8: ACTUAL COST SHEET (Q3) -->
 <div class="slide-container" id="slide8">
-    <div class="slide-header animate-up d-1">Standardized Cost Sheet</div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 1200px;">
+    <div class="slide-header animate-up d-1">Detailed Actual Cost Sheet</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 1200px; overflow-y: auto; max-height: 80vh; padding-bottom: 20px;">
         <div class="animate-up d-2">
-            <h3 style="text-align: center; font-family: var(--font-heading);">SNEAKERS (Actual)</h3>
+            <h3 style="text-align: center; font-family: var(--font-heading); border-bottom: 2px solid var(--vans-red);">SNEAKERS</h3>
             <table>
-                <tr><td>Raw Materials</td><td>470</td></tr>
-                <tr><td>Direct Labor</td><td>80</td></tr>
-                <tr style="background: #eee;"><td><strong>Prime Cost</strong></td><td><strong>550</strong></td></tr>
-                <tr><td>Overheads</td><td>200</td></tr>
-                <tr style="background: #000; color: #fff;"><td><strong>Total Actual Cost</strong></td><td><strong>750</strong></td></tr>
+                <tr><td>Upper (Mesh/Knit)</td><td>100</td></tr>
+                <tr><td>Lining & Padding</td><td>20</td></tr>
+                <tr><td>Memory Foam Insole</td><td>70</td></tr>
+                <tr><td>EVA Midsole</td><td>105</td></tr>
+                <tr><td>Rubber Outsole</td><td>110</td></tr>
+                <tr><td>Accessories & Pkg</td><td>65</td></tr>
+                <tr style="background: #e9e9e9;"><td><strong>Total Raw Material</strong></td><td><strong>470</strong></td></tr>
+                <tr><td>Direct Labor (Stitching/Lasting)</td><td>80</td></tr>
+                <tr style="background: #ddd;"><td><strong>Prime Cost</strong></td><td><strong>550</strong></td></tr>
+                <tr><td>Manufacturing Overheads</td><td>70</td></tr>
+                <tr><td>Admin & Selling Exp.</td><td>130</td></tr>
+                <tr style="background: #000; color: #fff;"><td><strong>TOTAL ACTUAL COST</strong></td><td><strong>750</strong></td></tr>
             </table>
         </div>
         <div class="animate-up d-3">
-            <h3 style="text-align: center; font-family: var(--font-heading);">FORMAL (Actual)</h3>
+            <h3 style="text-align: center; font-family: var(--font-heading); border-bottom: 2px solid #000;">FORMAL SHOES</h3>
             <table>
-                <tr><td>Raw Materials</td><td>600</td></tr>
-                <tr><td>Direct Labor</td><td>100</td></tr>
-                <tr style="background: #eee;"><td><strong>Prime Cost</strong></td><td><strong>700</strong></td></tr>
-                <tr><td>Overheads</td><td>200</td></tr>
-                <tr style="background: #000; color: #fff;"><td><strong>Total Actual Cost</strong></td><td><strong>900</strong></td></tr>
+                <tr><td>Upper (Genuine Leather)</td><td>200</td></tr>
+                <tr><td>Calfskin Lining</td><td>50</td></tr>
+                <tr><td>Cushioned Insole</td><td>90</td></tr>
+                <tr><td>Leather Midsole Board</td><td>85</td></tr>
+                <tr><td>TPR/PU Outsole</td><td>100</td></tr>
+                <tr><td>Accessories & Pkg</td><td>75</td></tr>
+                <tr style="background: #e9e9e9;"><td><strong>Total Raw Material</strong></td><td><strong>600</strong></td></tr>
+                <tr><td>Direct Labor (Hand Welted)</td><td>100</td></tr>
+                <tr style="background: #ddd;"><td><strong>Prime Cost</strong></td><td><strong>700</strong></td></tr>
+                <tr><td>Manufacturing Overheads</td><td>70</td></tr>
+                <tr><td>Admin & Selling Exp.</td><td>130</td></tr>
+                <tr style="background: #000; color: #fff;"><td><strong>TOTAL ACTUAL COST</strong></td><td><strong>900</strong></td></tr>
             </table>
         </div>
     </div>
@@ -455,7 +503,10 @@
             <p class="animate-up d-2">UrbanCobbler has achieved a favorable variance through strategic sourcing and target costing discipline. We are ready to compete in the university market.</p>
             <button class="btn-rect animate-up d-3" onclick="showSlide(1)">BACK TO START</button>
         </div>
-        <div class="hero-image animate-up d-2" style="background-image: url('https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80&w=1000'); filter: grayscale(1);"></div>
+        <div class="hero-images-container animate-up d-2" style="filter: grayscale(1);">
+            <div class="hero-img-box" style="background-image: url('https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&q=80&w=1000');"></div>
+            <div class="hero-img-box" style="background-image: url('https://images.unsplash.com/photo-1533867617858-e7b97e060509?auto=format&fit=crop&q=80&w=1000');"></div>
+        </div>
     </div>
 </div>
 
