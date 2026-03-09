@@ -1,551 +1,405 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UrbanCobbler - Financial Report</title>
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <style>
-        :root {
-            --bg-color: #ffffff;
-            --text-primary: #000000;
-            --text-secondary: #555555;
-            --vans-red: #C9002B;
-            --vans-black: #000000;
-            --highlight-color: #f0f0f0;
-            --font-heading: 'Oswald', sans-serif;
-            --font-body: 'Roboto', sans-serif;
-            --nav-height: 70px;
-            --top-strip-height: 40px;
-        }
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Database, 
+  Code2, 
+  LineChart, 
+  Github, 
+  Linkedin, 
+  Mail, 
+  Music, 
+  Trophy, 
+  Award,
+  ChevronRight,
+  Sparkles,
+  Brain,
+  ArrowUpRight,
+  MapPin,
+  Calendar,
+  Layers,
+  Phone,
+  Terminal,
+  Library,
+  Workflow,
+  Download,
+  Lightbulb,
+  CheckCircle2,
+  X,
+  Zap
+} from 'lucide-react';
 
-        * { box-sizing: border-box; }
+// --- Custom Spotify Icon ---
+const SpotifyIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.496 17.302c-.217.356-.677.47-1.033.253-2.858-1.747-6.456-2.14-10.693-1.171-.407.093-.815-.16-.908-.567-.093-.407.16-.815.567-.908 4.636-1.06 8.598-.611 11.78 1.337.356.217.47.677.287 1.056zm1.467-3.258c-.274.445-.853.585-1.297.311-3.272-2.012-8.259-2.593-12.128-1.417-.5.152-1.026-.134-1.178-.634-.152-.5.134-1.026.634-1.178 4.418-1.341 9.907-.694 13.659 1.611.444.274.584.853.31 1.307zm.129-3.385c-3.92-2.328-10.379-2.543-14.131-1.404-.602.183-1.234-.167-1.417-.769-.183-.602.167-1.234.769-1.417 4.314-1.31 11.442-1.056 15.968 1.631.541.321.718 1.022.397 1.563-.321.541-1.022.718-1.586.396z"/>
+  </svg>
+);
 
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background-color: var(--bg-color);
-            font-family: var(--font-body); color: var(--text-primary);
-        }
+// --- Animation Variants ---
+const fadeInUp = {
+  initial: { opacity: 0, y: 40 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+};
 
-        /* Texture Overlay for gritty feel */
-        .texture-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 9999;
-        }
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
-        /* Loader */
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 10000;
-            display: flex; justify-content: center; align-items: center;
-            color: #fff; font-family: var(--font-heading); font-size: 3rem;
-            transition: opacity 0.5s ease;
-        }
+const App = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
 
-        /* Navigation */
-        .main-nav {
-            position: fixed; top: 0; left: 0; width: 100%; height: var(--nav-height);
-            background-color: #fff; z-index: 1001; display: flex; justify-content: space-between;
-            align-items: center; padding: 0 40px; border-bottom: 2px solid #000;
-        }
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const projects = [
+    {
+      id: 1,
+      title: "Spotify Streaming Analysis",
+      tag: "Data Storytelling",
+      shortDesc: "Decoding the auditory patterns of 2024 global hits using NLP.",
+      fullDesc: "This project analyzed the relationship between lyrical explicitness and audience retention. Using VADER sentiment analysis, I processed thousands of lyrics to find patterns in song popularity.",
+      outcome: "Discovered that explicit lyrics correlate with 15% longer chart longevity in Gen-Z demographics.",
+      tech: ["Python", "NLTK", "Seaborn", "VADER"],
+      icon: <SpotifyIcon className="w-8 h-8 text-[#1DB954]" />,
+      accent: "border-[#1DB954]/20 hover:border-[#1DB954]/60",
+      insight: "Engagement vs. Sentiment"
+    },
+    {
+      id: 2,
+      title: "Workplace Wellness",
+      tag: "Statistical Research",
+      shortDesc: "Analyzing the human cost of modern workplace structures.",
+      fullDesc: "An EDA project focusing on mental health survey data. I preprocessed categorical features and normalized variables to perform high-confidence statistical tests.",
+      outcome: "Identified 'Asynchronous Communication' as the #1 mitigator of workplace anxiety across remote teams.",
+      tech: ["SciPy", "ANOVA", "Matplotlib", "Pandas"],
+      icon: <Brain className="w-8 h-8 text-purple-500" />,
+      accent: "border-purple-500/20 hover:border-purple-500/60",
+      insight: "The Remote Work Paradox"
+    },
+    {
+      id: 3,
+      title: "Library SQL Engine",
+      tag: "Database Architecture",
+      shortDesc: "High-performance database logic for university systems.",
+      fullDesc: "Designed an ER model and implemented full PL/SQL logic for library automation. Focused on secure OTP logins and real-time fine triggers.",
+      outcome: "Reduced manual fine-processing time by 85% through automated SQL triggers and procedure logic.",
+      tech: ["Oracle SQL", "PL/SQL", "Triggers", "ER Models"],
+      icon: <Database className="w-8 h-8 text-blue-600" />,
+      accent: "border-blue-600/20 hover:border-blue-600/60",
+      insight: "Automation over Manual Labor"
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#FDFDFD] text-[#1a1a1a] font-sans selection:bg-blue-600 selection:text-white overflow-x-hidden">
+      
+      {/* Navigation */}
+      <motion.nav 
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'py-4 bg-white/70 backdrop-blur-xl border-b border-gray-100' : 'py-8 bg-transparent'}`}
+      >
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          <div className="flex items-center gap-3 group cursor-pointer">
+            <motion.div 
+              whileHover={{ rotate: 180 }}
+              className="w-10 h-10 bg-black rounded-xl flex items-center justify-center text-white font-bold text-sm transition-colors group-hover:bg-blue-600"
+            >
+              GG
+            </motion.div>
+            <span className="font-bold tracking-tight text-xl">Garvita Goswami</span>
+          </div>
+          <div className="hidden md:flex items-center gap-10 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
+            <a href="#work" className="hover:text-black transition-colors">Portfolio</a>
+            <a href="#about" className="hover:text-black transition-colors">About</a>
+            <motion.a 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              href="mailto:garvitagoswami.05@gmail.com" 
+              className="bg-black text-white px-8 py-3 rounded-full shadow-lg"
+            >
+              Hire Me
+            </motion.a>
+          </div>
+        </div>
+      </motion.nav>
+
+      <main className="max-w-7xl mx-auto px-6 pt-40 pb-20">
         
-        .brand-logo {
-            background-color: var(--vans-red); color: white; padding: 5px 15px;
-            font-family: var(--font-heading); font-weight: 700; font-size: 24px;
-            letter-spacing: -1px; transform: skew(-5deg); cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .brand-logo:hover { transform: skew(-5deg) scale(1.05); }
+        {/* --- HERO --- */}
+        <motion.div initial="initial" animate="animate" variants={staggerContainer} className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-5">
+          <motion.div variants={fadeInUp} className="lg:col-span-8 bg-white border border-gray-100 rounded-[3.5rem] p-10 md:p-16 flex flex-col justify-between shadow-sm relative group overflow-hidden">
+            <div className="relative z-10">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-bold uppercase tracking-[0.2em] mb-12"
+              >
+                <Zap size={14} className="animate-pulse" /> Engineering Stories from Data
+              </motion.div>
+              <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-[0.9] mb-12">
+                Logic Meets <br />
+                <span className="text-blue-600">Narrative.</span>
+              </h1>
+              <p className="text-xl text-gray-400 max-w-lg font-medium leading-relaxed">
+                Computer Science student at LPU. I specialize in turning complex raw data into robust architectures and impactful insights.
+              </p>
+            </div>
+            
+            <div className="flex flex-wrap gap-12 mt-16 pt-10 border-t border-gray-50 z-10">
+               <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-300 mb-1">GitHub</p>
+                  <a href="https://github.com/Garvita260605" target="_blank" className="font-bold flex items-center gap-1 group/link">
+                    @Garvita260605 <ArrowUpRight className="group-hover/link:translate-x-1 transition-transform" size={14}/>
+                  </a>
+               </div>
+               <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-300 mb-1">Specialization</p>
+                  <span className="font-bold">Database Engineering & ML</span>
+               </div>
+            </div>
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-100/40 transition-colors duration-1000"></div>
+          </motion.div>
 
-        .nav-links { display: flex; gap: 20px; list-style: none; font-weight: 700; font-size: 15px; font-family: var(--font-heading); text-transform: uppercase; margin: 0; padding: 0; }
-        .nav-links li { cursor: pointer; position: relative; }
-        .nav-links li:hover { color: var(--vans-red); }
-        .nav-links li::after {
-            content: ''; position: absolute; bottom: -5px; left: 0; width: 0%; height: 2px;
-            background: var(--vans-red); transition: width 0.3s;
-        }
-        .nav-links li:hover::after { width: 100%; }
+          <motion.div variants={fadeInUp} className="lg:col-span-4 bg-gray-50 border border-gray-100 rounded-[3.5rem] overflow-hidden relative group cursor-pointer">
+            <img 
+              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800" 
+              alt="Garvita"
+              className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-10 flex flex-col justify-end text-white">
+               <h3 className="text-2xl font-bold">Garvita G.</h3>
+               <p className="text-white/60 text-sm">Uttarakhand, India</p>
+            </div>
+          </motion.div>
+        </motion.div>
 
-        /* Checker strip decoration */
-        .checker-strip {
-            width: 100%; height: 15px;
-            background-image: linear-gradient(45deg, #000 25%, transparent 25%), linear-gradient(-45deg, #000 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #000 75%), linear-gradient(-45deg, transparent 75%, #000 75%);
-            background-color: #fff; background-size: 20px 20px; margin-bottom: 30px;
-        }
+        {/* --- STACKS POP OUT --- */}
+        <section className="mb-5">
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {[
+                { title: "Engineering", icon: <Terminal className="text-blue-600"/>, items: ["Python", "SQL", "PL/SQL"], insight: "Optimizing backend logic and triggers." },
+                { title: "Analytics", icon: <Library className="text-emerald-600"/>, items: ["NumPy", "Pandas", "Scikit"], insight: "Extracting truth from structured noise." },
+                { title: "Impact", icon: <LineChart className="text-purple-600"/>, items: ["Power BI", "Excel", "NLTK"], insight: "Visualizing behavioral datasets." }
+              ].map((stack, i) => (
+                <motion.div 
+                  key={i}
+                  whileHover={{ y: -15, scale: 1.02 }}
+                  className="bg-white border border-gray-100 rounded-[2.5rem] p-10 hover:shadow-2xl hover:shadow-blue-500/5 transition-all group"
+                >
+                   <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-black group-hover:text-white transition-colors">
+                      {stack.icon}
+                   </div>
+                   <h4 className="font-bold text-xl mb-4">{stack.title}</h4>
+                   <div className="flex flex-wrap gap-2 mb-8">
+                      {stack.items.map(s => (
+                        <span key={s} className="px-3 py-1 bg-gray-100 rounded-lg text-[10px] font-black text-gray-500 uppercase">{s}</span>
+                      ))}
+                   </div>
+                   <div className="pt-6 border-t border-gray-50">
+                      <p className="text-xs text-gray-400 italic leading-relaxed flex gap-2">
+                        <Lightbulb size={14} className="text-yellow-500 shrink-0"/> {stack.insight}
+                      </p>
+                   </div>
+                </motion.div>
+              ))}
+           </div>
+        </section>
 
-        /* Slide Layout */
-        .slide-container {
-            position: absolute; top: var(--nav-height); left: 0; width: 100%; height: calc(100% - var(--nav-height));
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 40px; background: #fff; opacity: 0; pointer-events: none; z-index: 0;
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out; transform: translateY(20px);
-            overflow-y: auto; /* Allow scrolling if content is too tall */
-        }
-        .slide-container.active { opacity: 1; pointer-events: all; z-index: 1; transform: translateY(0); }
-
-        /* Animations */
-        .animate-up { opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .active .animate-up { opacity: 1; transform: translateY(0); }
-        .active .d-1 { transition-delay: 0.1s; }
-        .active .d-2 { transition-delay: 0.2s; }
-        .active .d-3 { transition-delay: 0.3s; }
-        .active .d-4 { transition-delay: 0.4s; }
-
-        /* Typography */
-        h1 { font-family: var(--font-heading); font-size: 4.5rem; text-transform: uppercase; line-height: 0.9; margin: 0 0 20px 0; }
-        h2 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--vans-red); text-transform: uppercase; margin-top: 0; }
-        .slide-header { font-family: var(--font-heading); font-size: 3rem; text-transform: uppercase; font-weight: 700; margin-bottom: 20px; text-align: center; width: 100%; }
-
-        /* Buttons */
-        .btn-rect {
-            background-color: #000; color: #fff; padding: 12px 30px; font-family: var(--font-heading);
-            font-weight: 700; text-transform: uppercase; border: 2px solid #000; cursor: pointer; transition: all 0.2s;
-            display: inline-block;
-        }
-        .btn-rect:hover { background-color: var(--vans-red); border-color: var(--vans-red); }
-        .btn-outline {
-             background-color: transparent; color: #000; padding: 12px 30px; font-family: var(--font-heading);
-            font-weight: 700; text-transform: uppercase; border: 2px solid #000; cursor: pointer; transition: all 0.2s;
-            display: inline-block;
-        }
-        .btn-outline:hover { background-color: #000; color: #fff; }
-
-
-        /* Layout Grids */
-        .hero-layout { display: grid; grid-template-columns: 1fr 1fr; width: 100%; height: 100%; align-items: center; gap: 40px; max-width: 1400px; margin: 0 auto; }
-        
-        .hero-images-container { width: 100%; height: 100%; display: grid; grid-template-rows: 1fr 1fr; border-left: 10px solid #000; }
-        .hero-img-box { width: 100%; height: 100%; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 5px solid #000; position: relative; }
-        .hero-img-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .hero-img-box span.filename-label { position: absolute; bottom: 8px; font-size: 0.6rem; font-weight: bold; color: #999; z-index: 5; background: rgba(255,255,255,0.8); padding: 2px 5px; }
-        
-        /* Placeholder styling for broken images */
-        .hero-img-box.placeholder-active::before { content: "\f188"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 3rem; color: #ddd; }
-        .img-container.placeholder-active::before { content: "\f1c5"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 2.5rem; color: #ddd; }
-
-        /* Tables */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; border: 2px solid #000; }
-        th { text-align: left; padding: 10px; background-color: #000; color: #fff; font-family: var(--font-heading); text-transform: uppercase; font-size: 0.9rem; }
-        td { padding: 8px 10px; border-bottom: 1px solid #eee; font-weight: 500; font-size: 0.85rem; }
-        .total-row { background-color: #000 !important; color: #fff !important; font-weight: 700; }
-        .subtotal-row { background-color: #f0f0f0; font-weight: 700; }
-        .highlight-row { background-color: rgba(201, 0, 43, 0.1); }
-
-        /* Cards */
-        .card { background: #fff; border: 2px solid #000; padding: 15px; position: relative; box-shadow: 5px 5px 0px rgba(0,0,0,0.1); }
-        .img-container { width: 100%; height: 180px; margin-bottom: 15px; border: 1px solid #ccc; background: #fafafa; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Process Steps - Updated for Horizontal Scrolling */
-        .process-scroll-container {
-            display: flex;
-            overflow-x: auto;
-            gap: 20px;
-            width: 100%;
-            padding: 20px 5px;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            /* Scrollbar styling */
-            scrollbar-width: thin;
-            scrollbar-color: #000 #f1f1f1;
-        }
-        .process-scroll-container::-webkit-scrollbar { height: 8px; }
-        .process-scroll-container::-webkit-scrollbar-track { background: #f1f1f1; }
-        .process-scroll-container::-webkit-scrollbar-thumb { background: #000; border-radius: 4px; }
-        .process-scroll-container::-webkit-scrollbar-thumb:hover { background: var(--vans-red); }
-
-        .process-card { 
-            border: 2px solid #000; padding: 15px; background: #fff; text-align: center; 
-            min-width: 250px; /* Fixed width to ensure horizontal layout */
-            flex: 0 0 auto;
-            transition: transform 0.2s;
-        }
-        .process-card:hover { transform: translateY(-5px); box-shadow: 5px 5px 0px var(--vans-red); }
-        .process-num { background: var(--vans-red); color: #fff; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: bold; }
-        .process-img-box { width: 100%; height: 150px; background: #eee; margin-bottom: 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
-        .process-img-box img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Controls */
-        .carousel-controls { position: absolute; bottom: 40px; right: 40px; display: flex; z-index: 10; gap: 10px; }
-        .control-btn { width: 50px; height: 50px; background: #000; color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: background 0.2s; }
-        .control-btn:hover { background: var(--vans-red); }
-        .counter { position: absolute; bottom: 45px; right: 170px; font-family: var(--font-heading); font-size: 2rem; font-weight: 700; z-index: 10; }
-        
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { 
-            background: #fff; padding: 40px; max-width: 800px; width: 100%; 
-            border: 10px solid var(--vans-red); position: relative;
-            /* Added to prevent clipping on small screens */
-            max-height: 90vh; 
-            overflow-y: auto;
-        }
-        
-        /* Hint for missing images */
-        .img-hint { position: absolute; bottom: 5px; left: 5px; font-size: 10px; color: #fff; background: #ff4444; padding: 2px 4px; border-radius: 2px; font-weight: bold; pointer-events: none; }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-layout { grid-template-columns: 1fr; grid-template-rows: auto auto; overflow-y: auto; display: block; }
-            .hero-images-container { border-left: none; border-top: 10px solid #000; height: 300px; margin-top: 20px; }
-            h1 { font-size: 3rem; }
-            .slide-header { font-size: 2rem; }
-            .nav-links { display: none; } /* Hide nav on mobile for simplicity */
-            .counter { right: 20px; bottom: 100px; font-size: 1.5rem; }
-            .carousel-controls { right: 20px; bottom: 20px; }
-        }
-    </style>
-    <script>
-        /**
-         * GLOBAL ERROR HANDLER FOR IMAGES
-         * Ensures that missing images don't leave blank gaps and show the required name.
-         */
-        window.imgErr = function(img) {
-            img.style.display = 'none';
-            const parent = img.parentElement;
-            if (parent) {
-                parent.classList.add('placeholder-active');
-                const src = img.getAttribute('src');
-                const filename = src ? src.split('/').pop() : 'Image';
+        {/* --- PROJECTS SECTION --- */}
+        <section id="work" className="mb-20 pt-12">
+          <div className="flex items-center gap-6 mb-12">
+            <h2 className="text-xs font-bold uppercase tracking-[0.4em] text-gray-300">Project Narratives</h2>
+            <div className="h-px w-full bg-gray-100"></div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {projects.map((p) => (
+              <motion.div 
+                key={p.id} 
+                layoutId={`card-${p.id}`}
+                onClick={() => setSelectedProject(p)}
+                whileHover={{ y: -10 }} 
+                className={`group cursor-pointer bg-white border ${p.accent} rounded-[3rem] p-10 transition-all shadow-sm hover:shadow-2xl`}
+              >
+                <div className="mb-16 flex justify-between items-start">
+                   <div className="p-4 bg-gray-50 rounded-2xl group-hover:scale-110 transition-all duration-500 shadow-sm">
+                      {p.icon}
+                   </div>
+                   <div className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                      {p.insight}
+                   </div>
+                </div>
+                <h3 className="text-2xl font-bold mb-4">{p.title}</h3>
+                <p className="text-gray-400 text-sm mb-12 leading-relaxed">{p.shortDesc}</p>
                 
-                // Add a small label explaining which file is missing
-                if (!parent.querySelector('.img-hint')) {
-                    const hint = document.createElement('span');
-                    hint.className = 'img-hint';
-                    hint.innerText = "Missing: " + filename;
-                    parent.appendChild(hint);
-                }
-            }
-        };
-    </script>
-</head>
-<body>
+                {/* Visual "Main Outcome" Highlight */}
+                <div className="p-5 bg-gray-50 rounded-2xl border border-gray-100 flex items-start gap-3 group-hover:bg-blue-50/50 transition-colors">
+                   <div className="text-blue-600 shrink-0 mt-0.5"><CheckCircle2 size={16}/></div>
+                   <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-1">Impact</p>
+                      <p className="text-xs font-bold text-gray-700 leading-snug">{p.outcome.substring(0, 50)}...</p>
+                   </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
 
-<!-- Loader -->
-<div id="loader">URBAN COBBLER</div>
-<div class="texture-overlay"></div>
+        {/* --- PROJECT POPUP (MODAL) --- */}
+        <AnimatePresence>
+          {selectedProject && (
+            <>
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+                onClick={() => setSelectedProject(null)}
+                className="fixed inset-0 bg-black/60 backdrop-blur-md z-[60]"
+              />
+              <motion.div 
+                layoutId={`card-${selectedProject.id}`}
+                className="fixed inset-4 md:inset-x-[20%] md:inset-y-[15%] bg-white rounded-[3.5rem] z-[70] overflow-hidden shadow-2xl flex flex-col md:flex-row"
+              >
+                <div className="w-full md:w-[40%] bg-gray-50 p-12 flex flex-col justify-between">
+                   <div className="p-8 bg-white rounded-[2rem] shadow-sm w-fit mx-auto md:mx-0">
+                      {selectedProject.icon}
+                   </div>
+                   <div>
+                      <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-300 mb-2">Technical Core</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedProject.tech.map(t => (
+                          <span key={t} className="px-4 py-2 bg-black text-white rounded-xl text-xs font-bold">{t}</span>
+                        ))}
+                      </div>
+                   </div>
+                </div>
 
-<!-- Navigation -->
-<nav class="main-nav">
-    <div class="brand-logo" onclick="showSlide(1)">URBAN COBBLER</div>
-    <ul class="nav-links">
-        <li onclick="showSlide(2)">Research</li>
-        <li onclick="showSlide(4)">Specs</li>
-        <li onclick="showSlide(5)">Process</li>
-        <li onclick="showSlide(6)">Target Cost</li>
-        <li onclick="showSlide(8)">Actual Cost</li>
-        <li onclick="showSlide(10)">Strategy</li>
-    </ul>
-</nav>
+                <div className="w-full md:w-[60%] p-12 md:p-16 flex flex-col justify-between overflow-y-auto">
+                   <button 
+                    onClick={() => setSelectedProject(null)}
+                    className="absolute top-8 right-8 p-3 bg-gray-100 rounded-full hover:bg-black hover:text-white transition-all"
+                   >
+                    <X size={20}/>
+                   </button>
+                   
+                   <div>
+                      <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-4 block">{selectedProject.tag}</span>
+                      <h2 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight">{selectedProject.title}</h2>
+                      <p className="text-lg text-gray-500 leading-relaxed mb-12">
+                        {selectedProject.fullDesc}
+                      </p>
+                      
+                      <div className="p-10 bg-blue-600 rounded-[2.5rem] text-white shadow-xl shadow-blue-500/20">
+                         <div className="flex items-center gap-3 mb-6">
+                            <Trophy size={24} className="text-white/50" />
+                            <span className="text-xs font-black uppercase tracking-widest opacity-60">Primary Outcome</span>
+                         </div>
+                         <p className="text-2xl font-bold leading-tight">
+                           {selectedProject.outcome}
+                         </p>
+                      </div>
+                   </div>
 
-<!-- SLIDE 1: HERO -->
-<div class="slide-container active" id="slide1">
-    <div class="hero-layout">
-        <div class="hero-text" style="padding: 20px 0;">
-            <div class="checker-strip animate-up d-1" style="width: 200px;"></div>
-            <h2 class="animate-up d-1">ACCM507 Project - CA-1</h2>
-            <h1 class="animate-up d-2">FINANCIAL<br>REPORTING.</h1>
-            <p class="animate-up d-3">Comparative Analysis of Target Costing: Sneakers vs. Formal Shoes.</p>
-            <div class="animate-up d-4" style="border-left: 6px solid var(--vans-red); padding-left: 20px; margin: 20px 0;">
-                <p><strong>SUBMITTED TO:</strong> DR. SAKSHI THAKUR</p>
+                   <div className="flex justify-between items-center mt-12 pt-12 border-t border-gray-100">
+                      <a href="https://github.com/Garvita260605" className="flex items-center gap-2 font-bold hover:text-blue-600 transition-colors">
+                        View Source <Github size={18}/>
+                      </a>
+                      <button 
+                        onClick={() => setSelectedProject(null)}
+                        className="text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-black transition-colors"
+                      >
+                        Close Details
+                      </button>
+                   </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
+        {/* --- ACADEMICS --- */}
+        <div id="about" className="grid grid-cols-1 md:grid-cols-12 gap-5 mt-20">
+          <motion.div whileInView={{ opacity: 1 }} initial={{ opacity: 0 }} className="md:col-span-8 bg-white border border-gray-100 rounded-[3.5rem] p-12 md:p-16">
+            <h2 className="text-3xl font-bold mb-16 flex items-center gap-4">
+              <Calendar className="text-blue-600" size={28}/> Education Path
+            </h2>
+            <div className="space-y-16 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-px before:bg-gray-100">
+               <div className="relative pl-12 group">
+                  <div className="absolute left-0 top-1.5 w-6 h-6 -translate-x-1/2 rounded-full border-4 border-white bg-blue-600 shadow-sm z-10 transition-transform group-hover:scale-125"></div>
+                  <h4 className="font-bold text-2xl mb-1 group-hover:text-blue-600 transition-colors">B.Tech (Hons.) Computer Science</h4>
+                  <p className="text-gray-400 text-lg font-medium mb-4 italic">Lovely Professional University • Punjab</p>
+                  <div className="flex gap-4">
+                    <span className="px-5 py-2 bg-blue-50 text-blue-600 rounded-2xl text-[10px] font-black uppercase tracking-widest">CGPA: 7.1</span>
+                    <span className="px-5 py-2 bg-gray-50 text-gray-400 rounded-2xl text-[10px] font-black uppercase tracking-widest">2023 — Present</span>
+                  </div>
+               </div>
+               <div className="relative pl-12 group opacity-60 hover:opacity-100 transition-opacity">
+                  <div className="absolute left-0 top-1.5 w-6 h-6 -translate-x-1/2 rounded-full border-4 border-white bg-gray-200 shadow-sm z-10 transition-transform group-hover:scale-125"></div>
+                  <h4 className="font-bold text-2xl mb-1 transition-colors">Intermediate & Matriculation</h4>
+                  <p className="text-gray-400 text-lg font-medium mb-4 italic">Army Public School, Almora</p>
+                  <div className="flex gap-4">
+                    <span className="px-5 py-2 bg-gray-50 text-gray-400 rounded-2xl text-[10px] font-black uppercase tracking-widest">97% (Matric)</span>
+                    <span className="px-5 py-2 bg-gray-50 text-gray-400 rounded-2xl text-[10px] font-black uppercase tracking-widest">82% (Inter)</span>
+                  </div>
+               </div>
             </div>
-            <div class="animate-up d-4" style="display: flex; gap: 15px;">
-                <button class="btn-rect" onclick="nextSlide()">START PRESENTATION</button>
-                <button class="btn-outline" onclick="openModal('crewModal')">THE CREW</button>
+          </motion.div>
+
+          <div className="md:col-span-4 space-y-5">
+            <div className="bg-black rounded-[3.5rem] p-12 text-white h-full flex flex-col justify-between">
+              <div>
+                <h2 className="text-2xl font-bold mb-8">Certifications</h2>
+                <div className="space-y-4">
+                  {["Networking (Coursera)", "SQL & Data Sci (LPU)", "Python for ML (Udemy)"].map((cert, i) => (
+                    <motion.div key={i} whileHover={{ x: 10 }} className="flex items-center gap-4 p-4 border border-white/10 rounded-2xl bg-white/5 cursor-default">
+                      <Award size={18} className="text-white/30"/>
+                      <span className="text-sm font-bold opacity-80 tracking-tight">{cert}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-12 pt-8 border-t border-white/10">
+                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-4 text-center">Backstage</p>
+                 <div className="flex justify-center gap-6 opacity-60">
+                    <div className="text-center"><Music size={20} className="mx-auto mb-1"/><span className="text-[8px] font-bold uppercase tracking-widest">Singing</span></div>
+                    <div className="text-center"><Trophy size={20} className="mx-auto mb-1"/><span className="text-[8px] font-bold uppercase tracking-widest">Hackathons</span></div>
+                 </div>
+              </div>
             </div>
+          </div>
         </div>
-        <div class="hero-images-container animate-up d-2">
-            <div class="hero-img-box"><img src="sneaker.jpg" alt="Sneaker" onerror="imgErr(this)"><span class="filename-label">sneaker.jpg</span></div>
-            <div class="hero-img-box"><img src="formal.jpg" alt="Formal Shoe" onerror="imgErr(this)"><span class="filename-label">formal.jpg</span></div>
-        </div>
-    </div>
-</div>
+      </main>
 
-<!-- SLIDE 2: MARKET RESEARCH (Q1) -->
-<div class="slide-container" id="slide2">
-    <div class="slide-header animate-up d-1">Question 1: Market Research</div>
-    <div class="hero-layout">
-        <div style="padding-right: 20px;">
-            <p class="animate-up d-2"><strong>Method:</strong> Structured Google Form Questionnaire ($N=50$)</p>
-            <div class="card animate-up d-3">
-                <p><strong>Findings:</strong> 42.9% Sneaker preference. Comfort is the #1 driver (76.2%). High price sensitivity in ₹900–1500 range.</p>
-                <div style="background: #e8f5e9; color: #2e7d32; padding: 5px; font-weight: bold; font-size: 0.7rem; margin-top: 10px;">PROOFS ATTACHED IN APPENDIX</div>
+      <footer className="py-24 bg-white border-t border-gray-100 mt-20">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <motion.div initial={{ scale: 0.9 }} whileInView={{ scale: 1 }} className="mb-20">
+            <h2 className="text-6xl md:text-8xl font-bold mb-12 tracking-tighter">Ready to <br/> <span className="text-blue-600 italic">collaborate?</span></h2>
+            <div className="flex justify-center gap-12">
+              <a href="https://linkedin.com/in/garvita-goswami-348" target="_blank" className="p-5 bg-gray-50 rounded-[2rem] hover:bg-blue-600 hover:text-white transition-all hover:-rotate-6"><Linkedin size={28}/></a>
+              <a href="https://github.com/Garvita260605" target="_blank" className="p-5 bg-gray-50 rounded-[2rem] hover:bg-black hover:text-white transition-all hover:rotate-6"><Github size={28}/></a>
+              <a href="mailto:garvitagoswami.05@gmail.com" className="p-5 bg-gray-50 rounded-[2rem] hover:bg-emerald-500 hover:text-white transition-all"><Mail size={28}/></a>
             </div>
-            <button class="btn-rect animate-up d-4" style="margin-top: 20px;" onclick="openModal('surveyModal')">VIEW SURVEY DATA</button>
+          </motion.div>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-12 border-t border-gray-50">
+             <p className="text-gray-300 text-[10px] font-black uppercase tracking-[0.6em]">Garvita Goswami • Studio Portfolio 2025</p>
+             <div className="flex items-center gap-2 text-gray-300 text-[10px] font-black uppercase">
+                <MapPin size={12}/> Punjab / Uttarakhand, IN
+             </div>
+          </div>
         </div>
-        <div class="animate-up d-3">
-            <div class="img-container" style="height: 250px;"><img src="survey.jpg" alt="Survey Graph" onerror="imgErr(this)"></div>
-            <p style="font-size: 0.7rem; text-align: center; color: #999;">Visual analysis of preference results</p>
-        </div>
+      </footer>
     </div>
-</div>
+  );
+};
 
-<!-- SLIDE 3: COMPETITOR ANALYSIS (Q1) -->
-<div class="slide-container" id="slide3">
-    <div class="slide-header animate-up d-1">Competitor Pricing Matrix</div>
-    <div style="width: 100%; max-width: 900px;">
-        <table class="animate-up d-2">
-            <thead>
-                <tr><th>Competitor</th><th>Price Range (₹)</th><th>Target Segment</th><th>Our Positioning</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>Dass Shoe Co.</td><td>2,500 - 3,000</td><td>Premium / Local</td><td>Niche Quality</td></tr>
-                <tr><td>Bata</td><td>1,200 - 3,500</td><td>Mass Market</td><td>Brand Trust</td></tr>
-                <tr class="highlight-row"><td><strong>UrbanCobbler</strong></td><td><strong>1,000 - 1,200</strong></td><td><strong>University / Pro</strong></td><td><strong>Value Disrupter</strong></td></tr>
-                <tr><td>Red Tape</td><td>1,000 - 2,500</td><td>Lifestyle</td><td>Aggressive Online</td></tr>
-                <tr><td>Tracer</td><td>900 - 1,200</td><td>Budget</td><td>Local Accessibility</td></tr>
-            </tbody>
-        </table>
-        <p class="animate-up d-3" style="margin-top: 20px; font-weight: bold; text-align: center;">Determined Selling Price: ₹1,200 (Formal) / ₹1,000 (Sneaker)</p>
-    </div>
-</div>
-
-<!-- SLIDE 4: PRODUCT SPECS (Q2) -->
-<div class="slide-container" id="slide4">
-    <div class="slide-header animate-up d-1">Question 2: Specifications</div>
-    <div class="hero-layout">
-        <div class="card animate-up d-2">
-            <div class="img-container"><img src="sneaker_spec.jpg" alt="Sneaker Spec" onerror="imgErr(this)"></div>
-            <h2>Sneakers</h2>
-            <p>Upper: Synthetic Mesh. Sole: Vulcanized Rubber. Insole: Memory Foam.</p>
-        </div>
-        <div class="card animate-up d-3">
-            <div class="img-container"><img src="formal_spec.jpg" alt="Formal Spec" onerror="imgErr(this)"></div>
-            <h2>Formal</h2>
-            <p>Upper: Genuine Leather. Sole: TPR. Lining: Calf-skin.</p>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 5: MANUFACTURING PROCESS (Q2) -->
-<div class="slide-container" id="slide5">
-    <div class="slide-header animate-up d-1">Manufacturing Process</div>
-    <!-- Horizontal Scroller Container -->
-    <div class="process-scroll-container animate-up d-2">
-        <div class="process-card"><div class="process-num">1</div><div class="process-img-box"><img src="step1.jpg" alt="Design" onerror="imgErr(this)"></div><strong>Designing</strong></div>
-        <div class="process-card"><div class="process-num">2</div><div class="process-img-box"><img src="step2.jpg" alt="Cut" onerror="imgErr(this)"></div><strong>Cutting</strong></div>
-        <div class="process-card"><div class="process-num">3</div><div class="process-img-box"><img src="step3.jpg" alt="Close" onerror="imgErr(this)"></div><strong>Closing</strong></div>
-        <div class="process-card"><div class="process-num">4</div><div class="process-img-box"><img src="step4.jpg" alt="Last" onerror="imgErr(this)"></div><strong>Lasting</strong></div>
-        <div class="process-card"><div class="process-num">5</div><div class="process-img-box"><img src="step5.jpg" alt="Sole" onerror="imgErr(this)"></div><strong>Sole Attachment</strong></div>
-        <div class="process-card"><div class="process-num">6</div><div class="process-img-box"><img src="step6.jpg" alt="Inspect" onerror="imgErr(this)"></div><strong>Inspection</strong></div>
-    </div>
-</div>
-
-<!-- SLIDE 6: TARGET COSTING (Q2) -->
-<div class="slide-container" id="slide6">
-    <div class="slide-header animate-up d-1">Target Cost Derivation</div>
-    <div style="width: 100%; max-width: 800px;">
-        <div class="animate-up d-2" style="background: #f9f9f9; padding: 15px; border-left: 5px solid var(--vans-red); margin-bottom: 15px;">
-            <p><strong>Criterion:</strong> 20% Profit Margin (Industry standard for footwear retail sustainability).</p>
-        </div>
-        <table class="animate-up d-3">
-            <thead>
-                <tr><th>Particulars</th><th>Formal Shoes (₹)</th><th>Sneakers (₹)</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>Target Selling Price</td><td>1,200</td><td>1,000</td></tr>
-                <tr><td>Less: Profit @ 20%</td><td>(240)</td><td>(200)</td></tr>
-                <tr class="total-row"><td>DERIVED TARGET COST</td><td>960</td><td>800</td></tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- SLIDE 7: SUPPLIER RESEARCH (Q3) -->
-<div class="slide-container" id="slide7">
-    <div class="slide-header animate-up d-1">Question 3: Supplier Analysis</div>
-    <div class="hero-layout">
-        <div class="card animate-up d-2">
-            <h3>IndiaMART Proof</h3>
-            <div class="img-container" style="height: 120px;"><img src="indiamart.jpg" alt="IndiaMart" onerror="imgErr(this)"></div>
-            <p>Sourced Synthetic PU @ ₹100/m (Bulk).</p>
-        </div>
-        <div class="card animate-up d-3">
-            <h3>Vendor Quotation</h3>
-            <div class="img-container" style="height: 120px;"><img src="quotation.jpg" alt="Quote" onerror="imgErr(this)"></div>
-            <p>Genuine Leather @ ₹200/unit (Verified).</p>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 8: ACTUAL COST SHEET (Q3) -->
-<div class="slide-container" id="slide8">
-    <div class="slide-header animate-up d-1">Detailed Cost Sheet</div>
-    <div class="hero-layout" style="align-items: start;">
-        <div class="animate-up d-2">
-            <h4 style="text-align: center; font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 5px;">SNEAKERS</h4>
-            <table>
-                <tr><td>Material Consumed</td><td>470</td></tr>
-                <tr><td>Direct Wages</td><td>80</td></tr>
-                <tr class="subtotal-row"><td>PRIME COST</td><td>550</td></tr>
-                <tr><td>Mfg Overheads</td><td>70</td></tr>
-                <tr class="subtotal-row"><td>FACTORY COST</td><td>620</td></tr>
-                <tr><td>Admin Overheads</td><td>60</td></tr>
-                <tr class="subtotal-row"><td>COST OF PROD.</td><td>680</td></tr>
-                <tr><td>Selling/Dist.</td><td>70</td></tr>
-                <tr class="total-row"><td>TOTAL ACTUAL COST</td><td>750</td></tr>
-            </table>
-        </div>
-        <div class="animate-up d-3">
-            <h4 style="text-align: center; font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 5px;">FORMAL</h4>
-            <table>
-                <tr><td>Material Consumed</td><td>600</td></tr>
-                <tr><td>Direct Wages</td><td>100</td></tr>
-                <tr class="subtotal-row"><td>PRIME COST</td><td>700</td></tr>
-                <tr><td>Mfg Overheads</td><td>70</td></tr>
-                <tr class="subtotal-row"><td>FACTORY COST</td><td>770</td></tr>
-                <tr><td>Admin Overheads</td><td>60</td></tr>
-                <tr class="subtotal-row"><td>COST OF PROD.</td><td>830</td></tr>
-                <tr><td>Selling/Dist.</td><td>70</td></tr>
-                <tr class="total-row"><td>TOTAL ACTUAL COST</td><td>900</td></tr>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 9: CONFORMITY (Q4) -->
-<div class="slide-container" id="slide9">
-    <div class="slide-header animate-up d-1">Question 4: Conformity Analysis</div>
-    <div style="width: 100%; max-width: 800px;">
-        <table class="animate-up d-2">
-            <thead>
-                <tr><th>Product</th><th>Target Cost (₹)</th><th>Actual Cost (₹)</th><th>Variance</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>Sneakers</td><td>800</td><td>750</td><td>50 (F)</td></tr>
-                <tr><td>Formal Shoes</td><td>960</td><td>900</td><td>60 (F)</td></tr>
-            </tbody>
-        </table>
-        <div class="card animate-up d-3" style="margin-top: 20px;">
-            <strong>Conformity Steps Taken:</strong>
-            <p style="margin-top: 5px;">1. Bulk negotiation for mesh (15% discount).<br>2. Automated cutting to reduce waste.<br>3. Labor efficiency training to reduce per-unit time.</p>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 10: SCM TECHNIQUES (Q4) -->
-<div class="slide-container" id="slide10">
-    <div class="slide-header animate-up d-1">Strategic Cost Management</div>
-    <div class="hero-layout">
-        <div class="card animate-up d-2">
-            <h2>1. Value Engineering</h2>
-            <p>Analyzing functions of components (e.g. padding) to swap for high-durability/low-cost local alternatives without quality loss.</p>
-        </div>
-        <div class="card animate-up d-3">
-            <h2>2. Kaizen Costing</h2>
-            <p>Continuous tiny improvements in assembly line layout to reduce worker movement time and power consumption by 5%.</p>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 11: CONCLUSION -->
-<div class="slide-container" id="slide11">
-    <div class="hero-layout">
-        <div class="hero-text">
-            <div class="checker-strip" style="width: 150px;"></div>
-            <h1>FINANCIAL<br>SUCCESS.</h1>
-            <p>UrbanCobbler has achieved cost discipline. We are ready for market entry.</p>
-            <button class="btn-rect" onclick="showSlide(1)">REPLAY</button>
-        </div>
-        <div class="hero-images-container" style="filter: grayscale(1);">
-            <div class="hero-img-box"><img src="sneaker.jpg" alt="End Sneaker" onerror="imgErr(this)"></div>
-            <div class="hero-img-box"><img src="formal.jpg" alt="End Formal" onerror="imgErr(this)"></div>
-        </div>
-    </div>
-</div>
-
-<!-- Controls -->
-<span class="counter" id="counter">01 / 11</span>
-<div class="carousel-controls">
-    <button class="control-btn" onclick="prevSlide()"><i class="fa-solid fa-chevron-left"></i></button>
-    <button class="control-btn" onclick="nextSlide()"><i class="fa-solid fa-chevron-right"></i></button>
-</div>
-
-<!-- MODAL: SURVEY -->
-<div class="modal" id="surveyModal">
-    <div class="modal-content">
-        <h2>Survey Proof Summary</h2>
-        <p>Survey ID: UC-MARKET-2025. Responses: 50. Method: Digital Questionnaire.</p>
-        <div style="margin-top: 20px; font-size: 0.9rem; background: #eee; padding: 10px;">
-            <p><strong>Q: Preferred Footwear?</strong> Sneaker (42.9%), Formal (25%), Casual (32.1%)</p>
-            <p><strong>Q: Budget?</strong> < ₹1000 (30%), ₹1000-1500 (50%), > ₹1500 (20%)</p>
-        </div>
-        <button class="btn-rect" style="margin-top: 20px;" onclick="closeModal('surveyModal')">CLOSE</button>
-    </div>
-</div>
-
-<!-- MODAL: CREW -->
-<div class="modal" id="crewModal">
-    <div class="modal-content" style="text-align: center;">
-        <h2 style="font-size: 3rem; margin-bottom: 10px; color: var(--vans-red);">THE CREW</h2>
-        <div class="checker-strip" style="width: 100px; height: 10px; margin: 0 auto 20px auto;"></div>
-        <div style="font-family: var(--font-heading); font-size: 1.5rem; text-transform: uppercase; line-height: 1.6; color: #000;">
-            Enosh Lyall<br>Anuj Sharma<br>Sukhmanpreet Kaur<br>Ajaypal Singh<br>Abhishek Dogra
-        </div>
-        <p style="margin-top: 20px; color: #666; font-weight: bold;">Group Q2555</p>
-        <button class="btn-rect" style="margin-top: 30px;" onclick="closeModal('crewModal')">CLOSE</button>
-    </div>
-</div>
-
-<script>
-    // Initial setup
-    const hideLoader = () => {
-        const loader = document.getElementById('loader');
-        if (loader && loader.style.display !== 'none') {
-            loader.style.opacity = '0';
-            setTimeout(() => { loader.style.display = 'none'; }, 500);
-        }
-    };
-
-    // Hide loader on full load OR after 3 seconds timeout
-    window.addEventListener('load', hideLoader);
-    setTimeout(hideLoader, 3000); // Fallback
-
-    let cur = 1, tot = 11;
-
-    function updateCtr() {
-        const counter = document.getElementById('counter');
-        if (counter) counter.innerText = `${cur < 10 ? '0' + cur : cur} / ${tot}`;
-    }
-
-    function showSlide(n) {
-        if (n > tot) n = 1;
-        if (n < 1) n = tot;
-        const slides = document.querySelectorAll('.slide-container');
-        slides.forEach(s => s.classList.remove('active'));
-        const slide = document.getElementById('slide' + n);
-        if (slide) {
-            slide.classList.add('active');
-            cur = n;
-            updateCtr();
-        }
-    }
-
-    function nextSlide() { showSlide(cur + 1); }
-    function prevSlide() { showSlide(cur - 1); }
-
-    function openModal(id) {
-        const modal = document.getElementById(id);
-        if (modal) modal.style.display = 'flex';
-    }
-
-    function closeModal(id) {
-        const modal = document.getElementById(id);
-        if (modal) modal.style.display = 'none';
-    }
-
-    // Keyboard navigation
-    document.addEventListener('keydown', e => {
-        if (e.key === "ArrowRight") nextSlide();
-        if (e.key === "ArrowLeft") prevSlide();
-    });
-</script>
-</body>
-</html>
+export default App;
